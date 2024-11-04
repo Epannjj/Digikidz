@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
-        /* Center the form on the page */
         body {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
@@ -56,8 +56,12 @@
         }
 
         a {
+            border-style: solid;
+            border-color: #5b9bd5;
             display: inline-block;
             margin: 5px 0;
+            padding: 9px;
+            border-radius: 10px;
             color: #5b9bd5;
             text-decoration: none;
         }
@@ -80,8 +84,6 @@
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password" required><br>
         <a href="guru.php">Login</a><br>
-        <a href="koordinator.php">koor</a>
-        <h3>halooo</h3>
     </form>
 </body>
 <script src="script.js"></script>
