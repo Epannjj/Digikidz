@@ -7,7 +7,7 @@
     <title>koor</title>
     <style>
         <?php
-        include "styles.css";
+        include "../styles.css";
         ?>
     </style>
 </head>
@@ -109,6 +109,9 @@
                 <input type="button" value="Submit">
             </form>
         </div>
+    </section>
+    <section id="jadwal">
+        <?php include "jadwal.php"; ?>
     </section>
 </body>
 

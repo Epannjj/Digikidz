@@ -7,7 +7,7 @@
     <title>Guru</title>
     <style>
         <?php
-        include "styles.css";
+        include "../styles.css";
         ?>
     </style>
 </head>
