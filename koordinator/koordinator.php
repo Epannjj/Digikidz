@@ -51,7 +51,6 @@
                     <option value="">3</option>
                     <option value="">4</option>
                 </select><br>
-                <!-- <input type="file" name="foto" id="foto"><br> -->
                 <input type="button" value="Submit">
             </form>
         </div>
