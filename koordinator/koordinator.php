@@ -40,10 +40,9 @@
                             <input type="text" id="nama" name="nama" required><br>
                             <label for="nama">Program</label><br>
                             <select name="program" id="program">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
+                                <option value="Coding">Coding</option>
+                                <option value="Art">Art</option>
+                                <option value="Robotik">Robotik</option>
                             </select><br>
                             <label for="nama">Level</label><br>
                             <select name="level" id="level">
@@ -100,6 +99,7 @@
                                         <form action="../qrcode/generate_qr.php" method="post" target="_blank">
                                             <input type="hidden" name="nama" value="<?php echo $row['nama']; ?>">
                                             <input type="hidden" name="level" value="<?php echo $row['level']; ?>">
+                                            <input type="hidden" name="program" value="<?php echo $row['program']; ?>">
                                             <input type="submit" value="Generate QR">
                                         </form>
                                     </td>
