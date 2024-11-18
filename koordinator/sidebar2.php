@@ -26,7 +26,7 @@
                 <span><a href="#jadwal">Buat jadwal</a></span>
             </button>
             <button href="#presensi">
-                <span><a href="./index.php">Log out</a></span>
+                <span><a href="../index.php">Log out</a></span>
             </button>
         </nav>
     </div>

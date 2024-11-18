@@ -14,7 +14,8 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f0f0f5;
+            background: rgb(148, 37, 179);
+            background: linear-gradient(90deg, rgba(148, 37, 179, 1) 0%, rgba(148, 37, 179, 1) 35%, rgba(68, 131, 129, 1) 100%);
         }
 
         form {
@@ -22,12 +23,12 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 300px;
+            width: 250px;
             text-align: center;
         }
 
         h2 {
-            color: #333;
+            color: whitesmoke;
             margin-bottom: 20px;
         }
 
@@ -55,7 +56,7 @@
             outline: none;
         }
 
-        a {
+        input[type="submit"] {
             border-style: solid;
             border-color: #5b9bd5;
             display: inline-block;
@@ -66,25 +67,61 @@
             text-decoration: none;
         }
 
-        a:hover {
-            text-decoration: underline;
+        input[type="submit"]:active {
+            color: floralwhite;
+            background-color: #5b9bd5;
         }
 
         h3 {
-            color: #5b9bd5;
+            color: floralwhite;
+        }
+
+        img {
+            height: 70px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 30px;
+            }
+
+            form {
+                width: 100%;
+                margin: 30px;
+            }
         }
     </style>
 </head>
 
 <body>
+    <img src="logo.png" alt="logo" srcset="">
     <h2>Halaman Login</h2>
-    <form action="proses_login.php" method="post">
+    <form action="" method="post">
         <label for="username">Username / id :</label><br>
         <input type="text" id="username" name="username" required><br>
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password" required><br>
-        <a href="guru.php">Login</a><br>
+        <input type="submit" name="login" value="Login"><br>
     </form>
+    <!-- proses login -->
+    <?php
+    include 'db.php';
+    if (isset($_POST['login'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $query = mysqli_query($db, "SELECT * from karyawan where username = '$username' AND `password` = '$password'");
+        $ambil = mysqli_fetch_array($query);
+        if ($username == $ambil['username'] && $password == $ambil['password']) {
+            if ($ambil['jabatan'] == 'admin') {
+                header("location: koordinator/koordinator.php");
+            } elseif ($ambil['jabatan'] == 'guru') {
+                header("location: guru/guru.php");
+            }
+        } else {
+            echo "<h3>Username atau Password Salah</h3>";
+        }
+    }
+    ?>
 </body>
 <script src="script.js"></script>
 

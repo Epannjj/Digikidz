@@ -35,7 +35,7 @@
         <section id="siswa">
             <h3>Input Data Siswa</h3>
             <div class="formpresensi">
-                <form action="koordinator.php" method="post">
+                <form action="" method="post">
                     <label for="nama">Nama Siswa:</label><br>
                     <input type="text" id="nama" name="nama" required><br>
                     <label for="nama">Program</label><br>
@@ -188,30 +188,6 @@
                 <input type="text" id="password" name="password" required><br>
                 <input type="button" value="Submit">
                 <!-- php -->
-            </form>
-        </div>
-    </section>
-    <section id="siswa">
-        <h3>Input Data Siswa</h3>
-        <div class="formpresensi">
-            <form action="" method="post">
-                <label for="nama">Nama Siswa:</label><br>
-                <input type="text" id="nama" name="nama" required><br>
-                <label for="nama">Program</label><br>
-                <select name="program" id="program">
-                    <option value="">1</option>
-                    <option value="">2</option>
-                    <option value="">3</option>
-                    <option value="">4</option>
-                </select><br>
-                <label for="nama">level</label><br>
-                <select name="level" id="level">
-                    <option value="">1</option>
-                    <option value="">2</option>
-                    <option value="">3</option>
-                    <option value="">4</option>
-                </select><br>
-                <input type="button" value="Submit">
             </form>
         </div>
     </section>

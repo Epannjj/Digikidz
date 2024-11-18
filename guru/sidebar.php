@@ -18,7 +18,7 @@
                 <span><a href="#materi">Materi</a></span>
             </button>
             <button>
-                <span><a href="./index.php">Log out</a></span>
+                <span><a href="../index.php">Log out</a></span>
             </button>
         </nav>
     </div>
