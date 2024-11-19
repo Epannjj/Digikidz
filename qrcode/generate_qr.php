@@ -6,7 +6,7 @@ if (isset($_POST['nama'])) {
     $level = $_POST['level'];
     $program = $_POST['program'];
 
-    $qrContent = "Nama Siswa: " . $nama . "| Program = " . $program . "| level = " . $level;
+    $qrContent = $nama . $program . $level;
 
     // Define paths for temporary QR code, final name card image, background image, and logo image
     $tempDir = "temp/";
@@ -31,8 +31,8 @@ if (isset($_POST['nama'])) {
     $bgHeight = imagesy($background);
 
     // Define name card size (250px x 260px)
-    $cardWidth = 250;
-    $cardHeight = 260;
+    $cardWidth = 290;
+    $cardHeight = 290;
 
     // Create a new true color image for the name card with transparency enabled
     $image = imagecreatetruecolor($cardWidth, $cardHeight);
@@ -67,16 +67,16 @@ if (isset($_POST['nama'])) {
     $qrSize = 150; // QR code size
 
     // Copy the QR code onto the name card
-    imagecopyresampled($image, $qrImage, 75, 30, 0, 0, $qrSize, $qrSize, imagesx($qrImage), imagesy($qrImage));
+    imagecopyresampled($image, $qrImage, 75, 40, 0, 0, $qrSize, $qrSize, imagesx($qrImage), imagesy($qrImage));
 
     // Set text color
     $black = imagecolorallocate($image, 0, 0, 0);
 
     // Add text to the name card
     $fontPath = __DIR__ . '/arial.ttf'; // Path to a .ttf font file
-    imagettftext($image, 12, 0, 70, 190, $black, $fontPath, "Nama: " . $nama);
-    imagettftext($image, 12, 0, 70, 220, $black, $fontPath, "Program: " . $program);
-    imagettftext($image, 12, 0, 70, 250, $black, $fontPath, "Level: " . $level);
+    imagettftext($image, 12, 0, 75, 210, $black, $fontPath, "Nama: " . $nama);
+    imagettftext($image, 12, 0, 75, 240, $black, $fontPath, "Program: " . $program);
+    imagettftext($image, 12, 0, 75, 270, $black, $fontPath, "Level: " . $level);
 
     // Save the final name card image
     imagepng($image, $cardFileName);

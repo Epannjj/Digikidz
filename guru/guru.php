@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="../qrcode/html5-qrcode.min.js"></script>
     <title>Guru</title>
     <style>
         <?php
@@ -23,23 +25,8 @@
     </p>
     <section id="presensi">
         <h3>Presensi</h3>
-        <div class="formpresensi">
-            <form action="" method="post">
-                <label for="nama">Nama Siswa:</label><br>
-                <input type="text" id="nama" name="nama" required><br>
-                <!-- <label for="nama">Materi:</label><br>
-                <input type="text" id="nama" name="nama" required><br> -->
-                <select name="" id="">
-                    <option value="">Materi</option>
-                    <option value=""></option>
-                    <option value="">3</option>
-                    <option value="">3</option>
-                    <option value="">3</option>
-                </select><br>
-                <input type="button" value="Foto" style="width:60px;height: 80px;"><br>
-                <input type="button" value="Submit">
-            </form>
-        </div>
+        <?php include "../qrcode/scan.php";
+        ?>
     </section>
     <section id="liat">
         <h3>Hasil presensi </h3>

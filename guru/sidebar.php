@@ -7,7 +7,7 @@
         <nav class="sidebar-menu">
             <button>
                 <img src="../pisang.png" alt="a" srcset="">
-                <span><a>Presensi</a></span>
+                <span><a href="#presensi">Presensi</a></span>
             </button>
             <button>
                 <img src="../pisang.png" alt="a" srcset="">

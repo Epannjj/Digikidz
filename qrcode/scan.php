@@ -1,23 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <title>QR Code Scanner with Camera</title>
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-    <script src="html5-qrcode.min.js"></script>
+<script src="html5-qrcode.min.js"></script>
 
 </head>
 
 <body>
-    <h2>QR Code Scanner</h2>
-
-    <!-- Area Kamera -->
-    <div id="reader" style="width: 300px; height: 290px;"></div>
-
-    <!-- Area Hasil Scan -->
-    <div id="result">Hasil QR akan muncul di sini</div>
-
+    <h2>Presensi dengan QR</h2>
+    <div class="conten" style="display:flex;justify-content:flex-start;">
+        <!-- Area Kamera -->
+        <div id="reader" style="width: 300px; height: 290px;margin-right:50px;"></div>
+        <!-- Area Hasil Scan -->
+        <div id="result">Hasil Presensi :</div>
+    </div>
     <script>
         function onScanSuccess(decodedText, decodedResult) {
             console.log("QR Code Terbaca:", decodedText);
@@ -55,4 +47,3 @@
 </body>
 
 </html>
-s
