@@ -48,12 +48,16 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+            box-shadow: #5b9bd5 5px 5px 5px;
+
         }
 
         input[type="text"]:focus,
         input[type="password"]:focus {
             border-color: #5b9bd5;
             outline: none;
+            box-shadow: #666 3px 3px 3px;
+
         }
 
         input[type="submit"] {

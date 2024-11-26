@@ -24,7 +24,6 @@
     <H2>Halaman Guru</H2>
     </p>
     <section id="presensi">
-        <h3>Presensi</h3>
         <?php include "../qrcode/scan.php";
         ?>
     </section>

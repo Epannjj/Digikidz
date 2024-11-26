@@ -6,7 +6,7 @@ if (isset($_POST['nama'])) {
     $level = $_POST['level'];
     $program = $_POST['program'];
 
-    $qrContent = $nama . $program . $level;
+    $qrContent = $nama;
 
     // Define paths for temporary QR code, final name card image, background image, and logo image
     $tempDir = "temp/";
