@@ -11,7 +11,7 @@
             </button>
             <button>
                 <img src="../pisang.png" alt="a" srcset="">
-                <span><a href="#liat">Liat Presensi</a></span>
+                <span><a href="#liat">jadwal</a></span>
             </button>
             <button>
                 <img src="../pisang.png" alt="a" srcset="">

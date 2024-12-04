@@ -32,7 +32,7 @@
     border-radius: 5px;
     top: 0;
     left: 0;
-    width: 220px;
+    width: 25%;
     height: 100%;
     background: #6d10db;
     transition: width 0.4s;
@@ -40,14 +40,16 @@
   }
   .sidebar-inner {
     position: absolute;
+    align-items: center;
     top: 0;
     left: 0;
-    width: 220px;
+    width: 100%;
   }
 
   .sidebar-header {
     display: flex;
     align-items: center;
+    justify-content: center;
     height: 72px;
     padding: 0 1.25rem 0 0;
     background: rgba(255, 255, 255, 0.1);
@@ -89,6 +91,9 @@
 
   .sidebar-menu>button>span>a {
     color: #f9f9f9;
+  }
+  td{
+    text-align: center;
   }
 /* mobile responsive */
 @media screen and (max-width: 768px) {
