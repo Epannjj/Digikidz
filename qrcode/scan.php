@@ -119,10 +119,15 @@
         } else {
             $materi = "materi tidak ditemukan";
         }
+        $tgl = new DateTime;
         $tanggal = date('d-m-Y');
         $q2 = mysqli_query($db, "SELECT count(id) FROM hasil_presensi MAX ");
         $cekid = mysqli_fetch_array($q2)[0];
-        $id = $cekid + 1;
+        if ($cekid == 0) {
+            $id = 1;
+        } else {
+            $id = $cekid + 1;
+        }
         $sql = mysqli_query($db, "INSERT INTO hasil_presensi (id ,nama, program, `level`, materi, pertemuan, tanggal) VALUES ('$id', '$nama1', '$program1', '$level1', '$materi', '$pertemuan', '$tanggal')");
         if ($sql) {
             echo "Data presensi berhasil ditambahkan<br>

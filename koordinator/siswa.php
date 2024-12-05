@@ -5,10 +5,9 @@
         <input type="text" id="nama" name="nama" required><br>
         <label for="nama">Program</label><br>
         <select name="program" id="program">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
+            <option value="Coding">Coding</option>
+            <option value="Art">Art</option>
+            <option value="Robotik">Robotik</option>
         </select><br>
         <label for="nama">Level</label><br>
         <select name="level" id="level">
@@ -22,8 +21,6 @@
 
     <?php
     include "../db.php";
-    use Picqer\Barcode\BarcodeGeneratorHTML;
-
     if (isset($_POST['simpan'])) {
         $nama = $_POST['nama'];
         $program = $_POST['program'];
@@ -40,7 +37,6 @@
     }
     ?>
 </div>
-
 <div>
     <h3>Data Siswa</h3>
     <table border="1">
@@ -49,25 +45,28 @@
             <th>Nama Siswa</th>
             <th>Program</th>
             <th>Level</th>
-            <th>Barcode</th>
             <th>Aksi</th>
+            <th>QR Code</th>
         </tr>
         <?php
         $data = mysqli_query($db, "SELECT * FROM siswa");
-        while ($row = mysqli_fetch_array($data)) {
-            // Generate barcode
-            $generator = new BarcodeGeneratorHTML();
-            $barcode = $generator->getBarcode($row['nama'], $generator::TYPE_CODE_128);
-            ?>
+        while ($row = mysqli_fetch_array($data)) { ?>
             <tr>
                 <td><?php echo $row['id_siswa'] ?></td>
                 <td><?php echo $row['nama'] ?></td>
                 <td><?php echo $row['program'] ?></td>
                 <td><?php echo $row['level'] ?></td>
-                <td><?php echo $barcode ?></td>
                 <td>
                     <a href="edit_siswa.php?id_siswa=<?php echo $row['id_siswa'] ?>">Edit</a> |
                     <a href="hapus_siswa.php?id_siswa=<?php echo $row['id_siswa'] ?>">Hapus</a>
+                </td>
+                <td>
+                    <form action="../qrcode/generate_qr.php" method="post" target="_blank">
+                        <input type="hidden" name="nama" value="<?php echo $row['nama']; ?>">
+                        <input type="hidden" name="level" value="<?php echo $row['level']; ?>">
+                        <input type="hidden" name="program" value="<?php echo $row['program']; ?>">
+                        <input type="submit" value="Generate QR">
+                    </form>
                 </td>
             </tr>
         <?php } ?>
