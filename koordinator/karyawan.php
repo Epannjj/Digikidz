@@ -19,7 +19,7 @@
 <?php
 include "../db.php";
 if (isset($_POST["submit"])) {
-    $user = $_POST["user"];
+    $user = $_POST["username"];
     $q1 = mysqli_query($db, "SELECT username FROM karyawan WHERE username='$user'");
     $cekuser = mysqli_fetch_array($q1);
     if ($cekuser) {
