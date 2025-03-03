@@ -31,7 +31,12 @@ while ($row = mysqli_fetch_array($data)) {
                         <td>{$row['materi']}</td>
                         <td>{$row['pertemuan']}</td>
                         <td>{$row['tanggal']}</td>
-                        <td><input type='button' value='Foto' style='width:60px;height: 80px;'></td>
+                        <td>
+                        <form action='../foto.php' method='post' target='_blank'>
+                        <input type='hidden' name='id' value='{$row['id']}'>
+                        <input type='submit' value='Foto' style='width:60px;height: 80px;'>
+                        </form>
+                        </td>
                     </tr>";
     $no++;
 }

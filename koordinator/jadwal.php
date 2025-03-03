@@ -60,6 +60,7 @@
                 <th>Nama Siswa</th>
                 <th>Program</th>
                 <th>Level</th>
+                <th>Pertemuan</th>
                 <th>Materi</th>
                 <th>Tanggal</th>
                 <th>Guru</th>
@@ -73,6 +74,7 @@
                 echo "<td>" . $row['nama_siswa'] . "</td>";
                 echo "<td>" . $row['program'] . "</td>";
                 echo "<td>" . $row['level'] . "</td>";
+                echo "<td>" . $row['pertemuan'] . "</td>";
                 echo "<td>" . $row['judul'] . "</td>";
                 echo "<td>" . $row['tanggal'] . "</td>";
                 echo "<td>" . $row['teacher'] . "</td>";

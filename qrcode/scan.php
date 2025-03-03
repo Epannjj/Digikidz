@@ -119,8 +119,8 @@
         } else {
             $materi = "materi tidak ditemukan";
         }
-        $tgl = new DateTime;
-        $tanggal = date('d-m-Y');
+        $tgl = new DateTime();
+        $tanggal = $tgl->format('Y-m-d H:i:s');
         $q2 = mysqli_query($db, "SELECT count(id) FROM hasil_presensi MAX ");
         $cekid = mysqli_fetch_array($q2)[0];
         if ($cekid == 0) {

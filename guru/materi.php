@@ -3,8 +3,9 @@
     <label for="sort_program">Pilih Program:</label>
     <select name="sort_program" id="sort_program">
         <option value="">Semua Program</option>
-        <option value="Program B">Program B</option>
-        <option value="Program A">Program A</option>
+        <option value="Coding">Coding</option>
+        <option value="Art">Art</option>
+        <option value="Robotik">Robotik</option>
     </select>
 
     <label for="sort_level">Pilih Level:</label>
@@ -34,7 +35,7 @@ $sql = mysqli_query($db, $query);
     style="width: 100%; max-height: 100vh; overflow-y: auto; margin-top: 10px; padding: 5px; box-shadow: steelblue 2px 2px 2px;">
     <table border="1">
         <tr>
-            <th>ID Materi</th>
+            <th>No Materi</th>
             <th>Nama Materi</th>
             <th>Program</th>
             <th>Level</th>
