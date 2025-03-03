@@ -29,7 +29,7 @@ if (isset($_POST["submit"])) {
         $nama = $_POST['nama'];
         $password = $_POST["password"];
         $jabatan = $_POST["jabatan"];
-        $sql = mysqli_query($db, "INSERT INTO karyawan (username,`name`,`password`,jabatan) VALUES ('$username','$nama','$password','$jabatan')");
+        $sql = mysqli_query($db, "INSERT INTO karyawan (username,`nama`,`password`,jabatan) VALUES ('$username','$nama','$password','$jabatan')");
         if ($sql) {
             echo "Data Karyawan berhasil ditambahkan";
         } else {
