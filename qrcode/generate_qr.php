@@ -5,6 +5,7 @@ if (isset($_POST['nama'])) {
     $nama = $_POST['nama'];
     $level = $_POST['level'];
     $program = $_POST['program'];
+    $password = $_POST['password'];
 
     $qrContent = $nama;
 
@@ -74,6 +75,7 @@ if (isset($_POST['nama'])) {
     // Add text to the name card
     $fontPath = __DIR__ . '/arial.ttf'; // Path to a .ttf font file
     imagettftext($image, 18, 0, 130, 230, $black, $fontPath, $nama);
+    imagettftext($image, 18, 0, 130, 260, $black, $fontPath, $password);
 
     // Save the final name card image
     imagepng($image, $cardFileName);

@@ -1,6 +1,6 @@
 <h3>Input Data Siswa</h3>
 <div class="formpresensi">
-    <form action="" method="post">
+    <form action="#siswa" method="post">
         <label for="nama">Nama Siswa:</label><br>
         <input type="text" id="nama" name="nama" required><br>
         <label for="nama">Program</label><br>
@@ -28,7 +28,9 @@
         $cekid = mysqli_query($db, "SELECT MAX(id_siswa) FROM siswa");
         $ambilid = mysqli_fetch_array($cekid)[0];
         $id = $ambilid + 1;
-        $sql = mysqli_query($db, "INSERT INTO siswa (id_siswa, nama, program, `level`) VALUES ('$id', '$nama', '$program', '$level')");
+        //create password randomly
+        $password = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz0123456789"), 0, 8);
+        $sql = mysqli_query($db, "INSERT INTO siswa (id_siswa, nama, program, `level`,`password`) VALUES ('$id', '$nama', '$program', '$level','$password')");
         if ($sql) {
             echo "Data siswa berhasil ditambahkan";
         } else {
@@ -43,6 +45,7 @@
         <tr>
             <th>ID Siswa</th>
             <th>Nama Siswa</th>
+            <th>Password</th>
             <th>Program</th>
             <th>Level</th>
             <th>Aksi</th>
@@ -54,6 +57,7 @@
             <tr>
                 <td><?php echo $row['id_siswa'] ?></td>
                 <td><?php echo $row['nama'] ?></td>
+                <td><?php echo $row['password'] ?></td>
                 <td><?php echo $row['program'] ?></td>
                 <td><?php echo $row['level'] ?></td>
                 <td>
@@ -65,6 +69,7 @@
                         <input type="hidden" name="nama" value="<?php echo $row['nama']; ?>">
                         <input type="hidden" name="level" value="<?php echo $row['level']; ?>">
                         <input type="hidden" name="program" value="<?php echo $row['program']; ?>">
+                        <input type="hidden" name="password" value="<?php echo $row['password']; ?>">
                         <input type="submit" value="Generate QR">
                     </form>
                 </td>

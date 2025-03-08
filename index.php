@@ -100,13 +100,15 @@
 <body>
     <img src="logo.png" alt="logo" srcset="">
     <h2>Halaman Login</h2>
-    <form action="" method="post">
-        <label for="username">Username / id :</label><br>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br>
-        <input type="submit" name="login" value="Login"><br>
-    </form>
+    <div class="container-k">
+        <form action="" method="post">
+            <label for="username">Username / id :</label><br>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required><br>
+            <input type="submit" name="login" value="Login"><br>
+        </form>
+    </div>
     <!-- proses login -->
     <?php
     include 'db.php';
