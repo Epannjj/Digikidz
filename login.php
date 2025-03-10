@@ -128,6 +128,7 @@
         }
     }
     ?>
+    <?php include "logins.php"; ?>
 </body>
 <script src="script.js"></script>
 
