@@ -14,7 +14,7 @@ if (isset($_POST['id'])) {
     if (!empty($row['foto'])) {
         echo "<img src='uploads/" . $row['foto'] . "' width='200' height='200'><br><br>";
     } else {
-        echo "<p>Foto belum tersedia</p>";
+        echo "<p>Masukan foto hasil karya di sini</p>";
     }
 }
 
