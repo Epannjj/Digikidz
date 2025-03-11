@@ -52,7 +52,12 @@
             <th>QR Code</th>
         </tr>
         <?php
-        $data = mysqli_query($db, "SELECT * FROM siswa");
+
+        include "../pagination.php";      
+        $result_total = mysqli_query($db, "SELECT COUNT(*) AS total FROM siswa");
+        $total_data = mysqli_fetch_assoc($result_total)['total'];
+        $total_pages = ceil($total_data / $limit);           
+        $data = mysqli_query($db, "SELECT * FROM siswa LIMIT $start, $limit");
         while ($row = mysqli_fetch_array($data)) { ?>
             <tr>
                 <td><?php echo $row['id_siswa'] ?></td>
@@ -76,4 +81,5 @@
             </tr>
         <?php } ?>
     </table>
+    <?php include "../pagination2.html"; ?>   
 </div>
