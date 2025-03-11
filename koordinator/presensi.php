@@ -23,21 +23,30 @@ echo " <div>
 $data = mysqli_query($db, "SELECT * FROM hasil_presensi");
 $no = 1; // Tambahkan nomor urut
 while ($row = mysqli_fetch_array($data)) {
-    echo "
-                    <tr>
-                        <td>{$no}</td>
-                        <td>{$row['nama']}</td>
-                        <td>{$row['program']} - {$row['level']}</td>
-                        <td>{$row['materi']}</td>
-                        <td>{$row['pertemuan']}</td>
-                        <td>{$row['tanggal']}</td>
-                        <td>
-                        <form action='../foto.php' method='post' target='_blank'>
-                        <input type='hidden' name='id' value='{$row['id']}'>
-                        <input type='submit' value='Foto' style='width:60px;height: 80px;'>
-                        </form>
-                        </td>
-                    </tr>";
+    echo "<tr>
+            <td>{$no}</td>
+            <td>" . htmlspecialchars($row['nama']) . "</td>
+            <td>" . htmlspecialchars($row['program']) . " - " . htmlspecialchars($row['level']) . "</td>
+            <td>" . htmlspecialchars($row['materi']) . "</td>
+            <td>" . htmlspecialchars($row['pertemuan']) . "</td>
+            <td>" . htmlspecialchars($row['tanggal']) . "</td>
+            <td>";
+
+    // Cek apakah ada foto yang sudah tersimpan
+    if (!empty($row['hasil_karya']) && file_exists("../uploads/" . $row['hasil_karya'])) {
+        echo "<a href='../uploads/" . htmlspecialchars($row['hasil_karya']) . "' target='_blank'>
+                <img src='../uploads/" . htmlspecialchars($row['hasil_karya']) . "' width='60' height='80' style='object-fit:cover; cursor:pointer;'>
+              </a>";
+    } else {
+        // Jika belum ada foto, tampilkan tombol upload
+        echo "<form action='../foto.php' method='post' target='_blank'>
+                <input type='hidden' name='id' value='" . htmlspecialchars($row['id']) . "'>
+                <input type='submit' value='Foto' style='width:60px;height: 80px;'>
+              </form>";
+    }
+
+    echo "</td></tr>";
+
     $no++;
 }
 

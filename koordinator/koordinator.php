@@ -38,3 +38,4 @@
 </body>
 
 </html>
+<script src="../jsrefresh.js"></script>

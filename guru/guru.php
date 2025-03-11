@@ -22,7 +22,6 @@
     </div>
     <p>
     <H2>Halaman Guru</H2>
-    <H2>Halaman Guru</H2>
     </p>
     <section id="presensi">
         <?php include "../qrcode/scan.php";
@@ -37,3 +36,4 @@
 </body>
 
 </html>
+<script src="jsrefresh.js"></script>
