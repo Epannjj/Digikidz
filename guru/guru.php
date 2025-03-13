@@ -17,6 +17,7 @@
 <body>
     <div class="sidebar">
         <?php
+        session_start();
         include "sidebar.php";
         ?>
     </div>

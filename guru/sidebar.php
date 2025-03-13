@@ -1,8 +1,16 @@
 <nav class="sidebar">
     <div class="sidebar-inner">
         <header class="sidebar-header">
-            <button type="button" class="sidebar-burger" onclick="toggleSidebar()"></button>
-            <img src="../logo.png" class="sidebar-logo" />
+            <div class="logo">
+                <button type="button" class="sidebar-burger" onclick="toggleSidebar()"></button>
+                <img src="../logo.png" class="sidebar-logo" />
+            </div>
+            <div class="profil">
+                <button>
+                    <img src="../<?= $_SESSION['user']; ?>png" alt="User" class="user-img">
+                    <span class="user-nama"><?= $_SESSION['user']; ?></span>
+                </button>
+            </div>
         </header>
         <nav class="sidebar-menu">
             <button>

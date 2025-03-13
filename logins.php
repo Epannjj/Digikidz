@@ -13,7 +13,6 @@
 </body>
 <?php
 include 'db.php';
-session_start();
 if (isset($_POST['login'])) {
     $nama = $_POST['nama'];
     $password = $_POST['password'];
