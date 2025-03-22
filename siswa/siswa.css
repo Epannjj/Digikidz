@@ -1,0 +1,81 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+.header{
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 0 10px;
+height: 40px;
+font-size: small;
+background-color: rgb(204, 198, 198);
+}
+.kiri, .kanan {
+    display: flex; /* Gunakan flexbox untuk elemen di dalamnya */
+    align-items: center; /* Pastikan konten sejajar secara vertikal */
+}
+.kanan a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 9px;
+    margin-right: 10px;
+}
+
+.kanan a:hover {
+    color: #0056b3;
+}
+
+.kanan i {
+    font-size: 20px;
+    vertical-align: middle;
+}
+.container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+}
+
+a {
+    display: inline-block;
+    margin-top: 10px;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.progress-bar {
+    margin-top: 20px;
+    background: #e0e0e0;
+    border-radius: 25px;
+    overflow: hidden;
+    height: 20px;
+    width: 100%;
+    position: relative;
+}
+
+.progress-bar-fill {
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    height: 100%;
+    width: 0;
+    transition: width 0.5s ease-in-out;
+}
+
+.progress-text {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #555;
+}
