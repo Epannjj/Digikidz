@@ -21,9 +21,26 @@
     if (isset($_POST['simpan'])) {
         $nama = $_POST['nama'];
         $program = $_POST['program'];
-        $cekid = mysqli_query($db, "SELECT MAX(id_siswa) FROM siswa");
-        $ambilid = mysqli_fetch_array($cekid)[0];
-        $id = $ambilid + 1;
+        if ($program) {
+            $filteredWord = preg_replace('/[^A-Z0-9]/', '', $program);
+            // Hasilkan Front ID
+            $frontId = substr($filteredWord, offset: 0, length: 2);
+            $tgl = date('dm');
+            //id siswa
+            $cekjumlah = mysqli_query($db, "SELECT SUM(program) as jumlah 
+                                           FROM siswa 
+                                           WHERE program = '$program'");
+            $jumlah = mysqli_fetch_assoc($cekjumlah);
+            $endId = ($jumlah['jumlah'] === null) ? 1 : $jumlah['jumlah'] + 1;
+            // Hasilkan ID
+            function generateIdWithPadding($frontId, $jumlah)
+            {
+                return $frontId . sprintf("%03d", $jumlah);
+            }
+            $id = generateIdWithPadding($frontId, $endId);
+        } else
+            echo 'Error';
+
         //create password randomly
         $password = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz0123456789"), 0, 8);
         $sql = mysqli_query($db, "INSERT INTO siswa (id_siswa, nama, program,`password`) VALUES ('$id', '$nama', '$program','$password')");
