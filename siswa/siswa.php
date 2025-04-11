@@ -25,32 +25,50 @@
         </div>
     </div>
     <div class="container">
-        <div class="progres">
-            <?php include "../db.php";
-            if (isset($_SESSION['nama'])) {
-                $nama = $_SESSION['nama'];
-                $sql = "SELECT * FROM siswa WHERE nama = '$nama'";
-                $result = mysqli_query($db, $sql);
-                $data = mysqli_fetch_assoc($result);
-                echo "<p>Program: " . $data['program'] . "</p>";
-                echo "<p>Level: " . $data['level'] . "</p>";
-                echo "<h2>Progres Kelas</h2>";
-                $sql_progres = "SELECT MAX(`pertemuan`) as progres FROM hasil_presensi WHERE nama = '$nama'";
-                $result_progres = mysqli_query($db, $sql_progres);
-                $progres = mysqli_fetch_assoc($result_progres);
-                if ($progres['progres'] === null) {
-                    echo "<p>Belum ada pertemuan</p>";
-                } else {
-                    $persen = ($progres['progres'] / 16) * 100;
-                    echo "<div class='progress-bar'>
+        <div class="menu">
+            <div class="progres">
+                <?php include "../db.php";
+                if (isset($_SESSION['nama'])) {
+                    $nama = $_SESSION['nama'];
+                    $sql = "SELECT * FROM siswa WHERE nama = '$nama'";
+                    $result = mysqli_query($db, $sql);
+                    $data = mysqli_fetch_assoc($result);
+                    echo "<p>Program: " . $data['program'] . "</p>";
+                    echo "<h2>Progres Kelas</h2>";
+                    $sql_progres = "SELECT MAX(`pertemuan`) as progres FROM hasil_presensi WHERE nama = '$nama'";
+                    $result_progres = mysqli_query($db, $sql_progres);
+                    $progres = mysqli_fetch_assoc($result_progres);
+                    if ($progres['progres'] === null) {
+                        echo "<p>Belum ada pertemuan</p>";
+                    } else {
+                        $persen = ($progres['progres'] / 16) * 100;
+                        echo "<div class='progress-bar'>
                         <div class='progress-bar-fill' style='width: " . $persen . "%;'></div>
                       </div>";
-                    echo "<p class='progress-text'>" . round($persen, 2) . "%</p>";
+                        echo "<p class='progress-text'>" . round($persen, 2) . "%</p>";
+                    }
+                } else {
+                    echo "<p>Anda belum login.</p>";
                 }
-            } else {
-                echo "<p>Anda belum login.</p>";
-            }
-            ?>
+                ?>
+            </div>
+            <div class="pembayaran">
+                <?php
+                if (isset($_SESSION['nama'])) {
+                    $sql = "SELECT * FROM siswa WHERE nama = '$nama'";
+                    $result = mysqli_query($db, $sql);
+                    $data = mysqli_fetch_assoc($result);
+                    echo "<h2>Pembayaran</h2>";
+                    echo "<p>Status: " . $data['status'] . "</p>";
+                    echo "<p>Jumlah Pembayaran: " . $data['jumlah_pembayaran'] . "</p>";
+                } else {
+                    echo "<p>Anda belum login.</p>";
+                }
+                ?>
+            </div>
+        </div>
+        <div class="histori">
+
         </div>
     </div>
 </body>
