@@ -1,13 +1,11 @@
-<h3>Login karyawan</h3>
-<div class="container-k">
-    <form action="" method="post">
-        <label for="username">Username / id :</label><br>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br>
-        <input type="submit" name="login-g" value="Login"><br>
-    </form>
-</div>
+<form action="" method="post">
+    <h3>Login karyawan</h3>
+    <label for="username">Username / id :</label><br>
+    <input type="text" id="username" name="username" required><br>
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password" required><br>
+    <input type="submit" name="login-g" value="Login"><br>
+</form>
 <!-- proses login -->
 <?php
 include 'db.php';

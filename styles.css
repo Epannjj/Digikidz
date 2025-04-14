@@ -1,133 +1,140 @@
-  body{
-  margin-left: 300px;
-  background-color: silver
-  }
-  main{
-  background-color: #fff;
-  border-radius: 10px;
-  }
-  section {
-    height: 100vh;
-    border-style: solid;
-    border-radius: 10px;
-    padding: 10px;
-  }
-  nav {
-    position: fixed;
-  }
-  a {
-    text-decoration: none;
-    color: rgb(0, 0, 0);
-  }
-
-  button {
-    background: transparent;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-  }
-  .sidebar {
-    position: absolute;
-    overflow: hidden;
-    border-radius: 5px;
-    top: 0;
-    left: 0;
-    width: 25%;
-    height: 100%;
-    background: #6d10db;
-    transition: width 0.4s;
-    position: fixed;
-  }
-  .sidebar-inner {
-    position: absolute;
-    align-items: center;
-    top: 0;
-    left: 0;
-    width: 100%;
-  }
-
-  .sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 72px;
-    padding: 0 1.25rem 0 0;
-    background: rgba(255, 255, 255, 0.1);
-  }
-  .sidebar-burger {
-    display: none;
-  }
-  .sidebar-logo {
-    height: 60px;
-  }
-  
-  .sidebar-menu {
-    display: grid;
-  }
-
-  .sidebar-menu>button {
-    display: flex;
-    gap: 25px;
-    align-items: center;
-    height: 60px;
-    font-family: "Poppins";
-    font-size: 16px;
-    font-weight: 200;
-    letter-spacing: 2px;
-    line-height: 1;
-    padding: 0 25px;
-  }
-
-  .sidebar-menu>button.has-border {
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    margin-bottom: 1rem;
-  }
-
-  .sidebar-menu>button>img {
-    width: 24px;
-    height: 24px;
-  }
-
-  .sidebar-menu>button>span>a {
-    color: #f9f9f9;
-  }
-  td{
-    text-align: center;
-  }
-/* mobile responsive */
-@media screen and (max-width: 768px) {
-body{
-margin-left: 14%;
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-.sidebar-burger {
-  width: 72px;
-  height: 72px;
-  display: grid;
-  place-items: center;
-  background: url(../icon-burger.svg) no-repeat center center;
-}
-body.open .sidebar-burger {
-  background: url(../icon-close.svg) no-repeat no-repeat center center;
-}
-body .sidebar-menu>button>span>a{
-  display: none;
-  }
-body.open .sidebar-menu>button>span>a{
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f1e864;
   display: flex;
-  }
-.sidebar {
-  width: 70px;
-}
-body.open .sidebar {
-  width: 220px;
-}
-.sidebar-logo {
- display: none;
-}
-body.open .sidebar-logo {
- display:flex;
- height: 70px;
 }
 
+.sidebar-placeholder {
+  width: 250px;
+  background-color: #8A2BE2;
+  min-height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  color: white;
+  z-index: 10;
+}
+
+/* Container utama - dengan margin kiri untuk menghindari sidebar */
+.main-container {
+  margin-left: 250px;
+  /* Sesuaikan dengan lebar sidebar */
+  width: calc(100% - 250px);
+  padding: 20px;
+}
+
+.header {
+  background-color: #fff;
+  padding: 15px 20px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header h2 {
+  margin: 0;
+  color: #333;  
+}
+
+.content {
+  display: flex;
+  gap: 20px;
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  flex: 1;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  font-weight: normal;
+  color: #555;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.scanner-container {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#reader {
+  width: 100%;
+  max-width: 250px;
+  height: 140px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+.button {
+  padding: 8px 15px;
+  background-color: #e7e7e7;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.presensi-info {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  border: 1px solid #eee;
+}
+
+.success {
+  color: #28a745;
+}
+
+.error {
+  color: #dc3545; 
+}
+@media (max-width: 768px) {
+  .content {
+      flex-direction: column;
+  }
+
+  .main-container {
+      margin-left: 0;
+      width: 100%;
+      padding: 10px;
+  }
+
+  .sidebar-placeholder {
+      left: -250px;
+      /* Hanya untuk demo */
+  }
+  .sidebar-placeholder.open{
+
+  width: 75%;
+   left: 0;
+  }
+  .header h2{
+  margin-left: 30px;
+  }
 }

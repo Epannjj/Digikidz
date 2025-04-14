@@ -10,7 +10,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-evenly;
+            justify-content: start;
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
@@ -32,6 +32,9 @@
             align-items: center;
             justify-content: space-evenly;
             gap: 40px;
+            position: relative;
+            width: 100%;
+            max-width: 600px;
         }
 
         h2 {
@@ -56,7 +59,6 @@
             border-radius: 4px;
             box-sizing: border-box;
             box-shadow: #5b9bd5 5px 5px 5px;
-
         }
 
         input[type="text"]:focus,
@@ -64,7 +66,6 @@
             border-color: #5b9bd5;
             outline: none;
             box-shadow: #666 3px 3px 3px;
-
         }
 
         input[type="submit"] {
@@ -84,11 +85,53 @@
         }
 
         h3 {
-            color: floralwhite;
+            color: #5b9bd5;
         }
 
         img {
             height: 70px;
+        }
+
+        /* Tambahan style untuk toggle */
+        .toggle-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background-color: white;
+            color: #9425b3;
+            font-weight: bold;
+        }
+
+        .guru,
+        .siswa {
+            transition: all 0.5s ease;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            visibility: hidden;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .visible {
+            opacity: 1;
+            visibility: visible;
         }
 
         @media (max-width: 600px) {
@@ -105,21 +148,56 @@
 </head>
 
 <body>
-    <?php
-    session_start();
-    ?>
     <div class="logo">
         <img src="logo.png" alt="logo" srcset="">
     </div>
+
+    <div class="toggle-buttons">
+        <button class="toggle-btn active" id="guruBtn">Guru</button>
+        <button class="toggle-btn" id="siswaBtn">Siswa</button>
+    </div>
+
     <div class="form">
-        <div class="guru" style="display:flex;align-items:center;flex-direction:column;">
-            <?php include "login.php"; ?>
+        <div class="guru visible" id="guruForm">
+            <?php
+            include "login.php"; ?>
         </div>
-        <div class="siswa">
-            <?php include "logins.php"; ?>
+        <div class="siswa" id="siswaForm">
+            <div class="guru visible" id="guruForm">
+                <?php
+                include "logins.php"; ?>
+            </div>
         </div>
     </div>
+
+    <script>
+        // Get the elements
+        const guruBtn = document.getElementById('guruBtn');
+        const siswaBtn = document.getElementById('siswaBtn');
+        const guruForm = document.getElementById('guruForm');
+        const siswaForm = document.getElementById('siswaForm');
+
+        // Add event listeners
+        guruBtn.addEventListener('click', function () {
+            // Show guru form, hide siswa form
+            guruForm.classList.add('visible');
+            siswaForm.classList.remove('visible');
+
+            // Update button states
+            guruBtn.classList.add('active');
+            siswaBtn.classList.remove('active');
+        });
+
+        siswaBtn.addEventListener('click', function () {
+            // Show siswa form, hide guru form
+            siswaForm.classList.add('visible');
+            guruForm.classList.remove('visible');
+
+            // Update button states
+            siswaBtn.classList.add('active');
+            guruBtn.classList.remove('active');
+        });
+    </script>
 </body>
-<script src="script.js"></script>
 
 </html>
