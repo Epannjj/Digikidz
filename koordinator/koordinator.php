@@ -36,6 +36,12 @@
     <section id="jadwal">
         <?php include "jadwal.php"; ?>
     </section>
+    <section id="pembayaran">
+        <?php include "pembayaran.php"; ?>
+    </section>
+    <section id="harga">
+        <?php include "harga.php"; ?>
+    </section>
 </body>
 
 </html>
