@@ -43,7 +43,7 @@
 
         //create password randomly
         $password = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz0123456789"), 0, 8);
-        $sql = mysqli_query($db, "INSERT INTO siswa (id_siswa, nama, program,`password`) VALUES ('$id', '$nama', '$program','$password')");
+        $sql = mysqli_query($db, "INSERT INTO siswa (id_siswa, nama,`password`, program, level, tagihan) VALUES ('$id', '$nama','$password', '$program', '$level', '$tagihan')");
         if ($sql) {
             echo "Data siswa berhasil ditambahkan";
         } else {

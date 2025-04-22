@@ -27,7 +27,7 @@
         <?php
         include "../db.php";
         if (isset($_POST['submit_harga'])) {
-            $q1 = mysqli_query($db, "SELECT count(id_harga) FROM harga_program");
+            $q1 = mysqli_query($db, "SELECT count(id_harga) FROM harga");
             $cekid = mysqli_fetch_array($q1);
             $id = ($cekid[0] == 0) ? 1 : $cekid[0] + 1;
 
@@ -57,8 +57,9 @@
             <label for="sort_level">Pilih Level:</label>
             <select name="sort_level" id="sort_level">
                 <option value="">Semua Level</option>
-                <option value="Level 1">Level 1</option>
-                <option value="Level 2">Level 2</option>
+                <option value="1">Level 1</option>
+                <option value="2">Level 2</option>
+                <option value="3">Level 3</option>
                 <option value="Registrasi">Registrasi</option>
             </select>
 
