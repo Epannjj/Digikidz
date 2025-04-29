@@ -84,53 +84,11 @@
         }
 
         h3 {
-            color: floralwhite;
+            color: black
         }
 
         img {
             height: 70px;
-        }
-
-        /* Toggle buttons style */
-        .toggle-buttons {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 10px;
-        }
-
-        .toggle-btn {
-            padding: 10px 20px;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid white;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-btn.active {
-            background-color: white;
-            color: #9425b3;
-            font-weight: bold;
-        }
-
-        .guru-form,
-        .siswa-form {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: none;
-            /* Hide both forms initially */
-            justify-content: center;
-            transition: opacity 0.5s ease;
-        }
-
-        /* Show the form that is active */
-        .active-form {
-            display: flex;
-            opacity: 1;
-            z-index: 10;
         }
 
         @media (max-width: 600px) {
@@ -153,11 +111,6 @@
     <div class="logo">
         <img src="logo.png" alt="logo" srcset="">
     </div>
-    <div class="toggle-buttons">
-        <button type="button" class="toggle-btn active" id="guruBtn">Guru</button>
-        <button type="button" class="toggle-btn" id="siswaBtn">Siswa</button>
-    </div>
-
     <div class="form">
         <div class="guru" style="display:flex;align-items:center;flex-direction:column;">
             <?php include "login.php"; ?>

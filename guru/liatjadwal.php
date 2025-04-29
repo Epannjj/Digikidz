@@ -14,13 +14,11 @@ session_start();
 ?>
 
 <body>
-    <!-- Contoh sidebar (hanya placeholder) - sidebar sebenarnya sudah ada di halaman Anda -->
     <div class="sidebar-placeholder">
         <?php include "navbar-guru.php";
         include "../db.php" ?>
     </div>
 
-    <!-- Konten utama - diposisikan di sebelah kanan sidebar -->
     <div class="main-container">
         <div class="header">
             <h2>Jadwal</h2>

@@ -134,7 +134,7 @@
                                 $waktu = date('H:i:s');
 
                                 // Simpan ke tabel hasil_presensi
-                                $simpan = mysqli_query($db, "INSERT INTO hasil_presensi (id, nama, program,pertemuan, materi, tanggal, hasil_karya,teacher) 
+                                $simpan = mysqli_query($db, "INSERT INTO hasil_presensi (id, nama, program,pertemuan, materi, tanggal, hasil_karya,teacher) ;
                                        VALUES ('$id','$nama','$program', '$pertemuan',' ', '$tanggal', ' ','$teacher')");
 
                                 if ($simpan) {

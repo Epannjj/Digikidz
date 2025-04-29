@@ -7,7 +7,7 @@
     <title>koor</title>
     <style>
         <?php
-        session_start();
+        // session_start();
         include "../styles.css";
         ?>
     </style>
