@@ -126,7 +126,7 @@ if (isset($_SESSION['nama'])) {
     }
 
     // Output the PDF
-    $pdf->Output('progress_report.pdf', 'D');
+    $pdf->Output($nama . '_report.pdf', 'D');
 } else {
     // Not logged in
     echo "<script>alert('You need to be logged in to access this page.');</script>";
