@@ -19,11 +19,11 @@ if (isset($_SESSION['nama'])) {
         echo "<p class='progress-text'>" . round($persen, 2) . "%</p>";
 
     }
-    if ($progres['progres'] == 16) {
-        echo "<input type='button' value='Progres Report' class='btn-selesai' onclick=\"location.href='sertifikat.php'\">";
-    } else {
-        echo "<input type='button' value='Progres Report' class='btn-belumelesai' disabled>";
-    }
+    // if ($progres['progres'] == 16) {
+    echo "<input type='button' value='Progres Report' class='btn-selesai'onclick=\"location.href='progres_report.php'\">";
+    // } else {
+    // echo "<input type='button' value='Progres Report' class='btn-belumelesai' disabled>";
+    // }
 
 } else {
     echo "<p>Anda belum login.</p>";

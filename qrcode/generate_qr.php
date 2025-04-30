@@ -1,9 +1,8 @@
 <?php
-include "../phpqrcode/qrlib.php";
+include "../library/phpqrcode/qrlib.php";
 
 if (isset($_POST['nama'])) {
     $nama = $_POST['nama'];
-    $level = $_POST['level'];
     $program = $_POST['program'];
     $password = $_POST['password'];
 
