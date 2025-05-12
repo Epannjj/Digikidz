@@ -38,7 +38,10 @@
                     $nama = $_POST['nama'];
                     $program = $_POST['program'];
                     if ($program) {
-                        $filteredWord = preg_replace('/[^A-Z0-9]/', '', $program);
+                        $filter1 = explode(".",$program);
+                        $filter2 = $filter1[1];
+                        
+                        $filteredWord = preg_replace('/[^A-Z0-9]/', '', $filter2);
                         // Hasilkan Front ID
                         $frontId = substr($filteredWord, offset: 0, length: 2);
                         $tgl = date('dm');
@@ -47,6 +50,7 @@
                                            FROM siswa 
                                            WHERE program = '$program'");
                         $jumlah = mysqli_fetch_assoc($cekjumlah);
+                        $tagihan = 0;
                         $endId = ($jumlah['jumlah'] === null) ? 1 : $jumlah['jumlah'] + 1;
                         // Hasilkan ID
                         function generateIdWithPadding($frontId, $jumlah)
@@ -59,7 +63,7 @@
 
                     //create password randomly
                     $password = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz0123456789"), 0, 8);
-                    $sql = mysqli_query($db, "INSERT INTO siswa (id_siswa, nama,`password`, program, level, tagihan) VALUES ('$id', '$nama','$password', '$program', '$level', '$tagihan')");
+                    $sql = mysqli_query($db, "INSERT INTO siswa (id_siswa, nama,`password`, program, tagihan) VALUES ('$id', '$nama','$password', '$program', '$tagihan')");
                     if ($sql) {
                         echo "Data siswa berhasil ditambahkan";
                     } else {
