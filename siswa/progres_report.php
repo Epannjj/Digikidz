@@ -115,15 +115,15 @@ if (isset($_SESSION['nama'])) {
     }
 
     // Add remaining sessions if not all completed
-    if ($current_pertemuan < $total_pertemuan) {
-        for ($i = $current_pertemuan + 1; $i <= $total_pertemuan; $i++) {
-            $pdf->Cell(30, 8, 'Session ' . $i, 1);
-            $pdf->Cell(50, 8, '-', 1);
-            $pdf->Cell(50, 8, 'Upcoming', 1);
-            $pdf->Cell(0, 8, '-', 1);
-            $pdf->Ln();
-        }
-    }
+    // if ($current_pertemuan < $total_pertemuan) {
+    //     for ($i = $current_pertemuan + 1; $i <= $total_pertemuan; $i++) {
+    //         $pdf->Cell(30, 8, 'Session ' . $i, 1);
+    //         $pdf->Cell(50, 8, '-', 1);
+    //         $pdf->Cell(50, 8, 'Upcoming', 1);
+    //         $pdf->Cell(0, 8, '-', 1);
+    //         $pdf->Ln();
+    //     }
+    // }
 
     // Output the PDF
     $pdf->Output($nama . '_report.pdf', 'D');
