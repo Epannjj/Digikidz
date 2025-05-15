@@ -6,7 +6,7 @@ session_start(); ?>
 <div class="sidebar-placeholder">
     <?php include "sidebar2.php";
     include "../db.php";
-
+    include "../notification.php";
     ?>
 </div>
 
@@ -48,9 +48,9 @@ session_start(); ?>
                     $jabatan = $_POST["jabatan"];
                     $sql = mysqli_query($db, "INSERT INTO karyawan (username,`nama`,`password`,jabatan) VALUES ('$username','$nama','$password','$jabatan')");
                     if ($sql) {
-                        echo "Data Karyawan berhasil ditambahkan";
+                        showNotification("Data Karyawan berhasil ditambahkan", "success");
                     } else {
-                        echo "Data gagal ditambahkan";
+                        showNotification("Data gagal ditambahkan: " . mysqli_error($db), "error");
                     }
 
                 }
@@ -80,8 +80,10 @@ session_start(); ?>
                             <td><?= $row['password'] ?></td>
                             <td><?= $row['jabatan'] ?></td>
                             <td>
-                                <a href="edit_siswa.php?=<?php echo $row['username'] ?>">Edit</a> |
-                                <a href="hapus_siswa.php?=<?php echo $row['username'] ?>">Hapus</a>
+                                <a href="edit_siswa.php?=<?php echo $row['username'] ?>"><button
+                                        class="btn-edit">Edit</button></a>
+                                <a href="hapus_siswa.php?=<?php echo $row['username'] ?>"><button
+                                        class="btn-hapus">Hapus</button></a>
                             </td>
                             </tr>
                             <?php

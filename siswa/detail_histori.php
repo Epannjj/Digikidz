@@ -17,7 +17,7 @@
     include "sidebar.php";
     ?>
     <main>
-        <table class="tabel" style="background-color: #fff; border-radius: 10px;">
+        <table class="tabel" style="background-color: #cccccc; border-radius: 10px;">
             <thead>
                 <tr>
                     <th>Tanggal</th>

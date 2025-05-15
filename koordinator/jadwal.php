@@ -81,6 +81,7 @@
                         <th>Materi</th>
                         <th>Tanggal</th>
                         <th>Guru</th>
+                        <th>aksi</th>
                     </tr>
                     <?php
                     $query = mysqli_query($db, "SELECT * ,materi.judul_materi as judul FROM jadwal ,materi WHERE jadwal.program = materi.program AND jadwal.level = materi.level AND jadwal.pertemuan = materi.pertemuan");
@@ -94,7 +95,11 @@
                         echo "<td>" . $row['pertemuan'] . "</td>";
                         echo "<td>" . $row['judul'] . "</td>";
                         echo "<td>" . $row['tanggal'] . "</td>";
-                        echo "<td>" . $row['teacher'] . "</td>";
+                        echo "<td>" . $row['teacher'] . "</td>"; ?>
+                        <td> <a href="edit_siswa.php?=<?php echo $row['id'] ?>"><button class="btn-edit">Edit</button></a>
+                            <a href="hapus_siswa.php?=<?php echo $row['id'] ?>"><button class="btn-hapus">Hapus</button></a>
+                        </td>
+                        <?php
                         echo "</tr>";
                         $id++;
                     }

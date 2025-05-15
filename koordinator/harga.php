@@ -101,6 +101,7 @@
                         <th>Program</th>
                         <th>Level</th>
                         <th>Harga</th>
+                        <th>aksi</th>
                     </tr>
                     <?php while ($row = mysqli_fetch_array($sql)) { ?>
                         <tr>
@@ -108,6 +109,11 @@
                             <td><?php echo $row['program']; ?></td>
                             <td><?php echo $row['level']; ?></td>
                             <td>Rp<?php echo number_format($row['harga'], 0, ',', '.'); ?></td>
+                            <td> <a href="edit_siswa.php?=<?php echo $row['username'] ?>"><button
+                                        class="btn-edit">Edit</button></a>
+                                <a href="hapus_siswa.php?=<?php echo $row['username'] ?>"><button
+                                        class="btn-hapus">Hapus</button></a>
+                            </td>
                         </tr>
                     <?php } ?>
                 </table>

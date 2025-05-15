@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DigiKidz Sidebar Navigation</title>
+    <title>Admin</title>
     <style>
         body {
             margin: 0;
@@ -90,7 +90,7 @@
             position: fixed;
             top: 15px;
             left: 15px;
-            z-index: 1000;
+            z-index: 1;
             background-color: floralwhite;
             border: none;
             border-radius: 5px;
