@@ -32,7 +32,5 @@
         </div>
     </main>
 </body>
-<script>
-</script>
-
+<script src="../jsrefresh.js"></script>
 </html>

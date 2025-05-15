@@ -14,7 +14,7 @@ if (isset($_POST['id'])) {
     // Tampilkan foto jika ada
 if (!empty($row['hasil_karya']) && file_exists("../uploads/" . $row['hasil_karya'])) {
         echo "<p>Hasil karya sudah diunggah:</p>";
-        echo "<img src='../../Digikidz/uploads/" . $row['hasil_karya'] . "' width='200'><br><br>";
+        echo "<img src='../uploads/" . $row['hasil_karya'] . "' width='200'><br><br>";
     } else {
         echo "<p>Belum ada hasil karya. Silakan upload:</p>";
     }

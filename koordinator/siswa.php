@@ -103,11 +103,7 @@
                         <th>QR Code</th>
                     </tr>
                     <?php
-                    include "../pagination.php";
-                    $result_total = mysqli_query($db, "SELECT COUNT(*) AS total FROM siswa");
-                    $total_data = mysqli_fetch_assoc($result_total)['total'];
-                    $total_pages = ceil($total_data / $limit);
-                    $data = mysqli_query($db, "SELECT * FROM siswa LIMIT $start, $limit");
+                    $data = mysqli_query($db, "SELECT * FROM siswa");
 
                     while ($row = mysqli_fetch_array($data)) { ?>
                         <tr>
@@ -128,7 +124,6 @@
                         </tr>
                     <?php } ?>
                 </table>
-                <?php include "../pagination2.html"; ?>
             </div>
         </div>
     </div>

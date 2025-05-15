@@ -345,4 +345,3 @@
         `;
     });
     </script>
-    <script src="../jsrefresh.js"></script>
