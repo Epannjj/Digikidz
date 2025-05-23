@@ -188,6 +188,7 @@ tbody tr:nth-child(even) {
 .error {
   color: #dc3545; 
 }
+
 @media (max-width: 768px) {
   .content {
       flex-direction: column;

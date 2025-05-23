@@ -20,7 +20,7 @@ if (isset($_POST['login-g'])) {
                 $_SESSION['user'] = $username;
                 header("Location: koordinator/karyawan.php");
                 exit;
-            } elseif ($ambil['jabatan'] == 'guru') {
+            } elseif ($ambil['jabatan'] == 'teacher') {
                 $_SESSION['user'] = $username;
                 header("Location: guru/guru.php");
                 exit;

@@ -146,10 +146,7 @@
         <div class="logo-container">
             <img src="../logo.png" alt="DigiKidz" class="logo">
             <div class="profil">
-                <button>
-                    <img src="../<?= $_SESSION['user']; ?>png" alt="User" class="user-img">
-                    <span class="user-nama"><?= $_SESSION['user']; ?></span>
-                </button>
+                <a><span class="user-nama"><?= $_SESSION['user']; ?></span></a>
             </div>
         </div>
 

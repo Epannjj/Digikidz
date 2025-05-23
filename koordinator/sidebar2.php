@@ -173,11 +173,6 @@
             <span class="icon"><img src="../robot.png" alt="robot"></span>
             <span>Materi</span>
         </a>
-        <!-- Belom fiks ada pa ga -->
-        <a href="jadwal.php" class="menu-item" data-page="jadwal">
-            <span class="icon"><img src="../robot.png" alt="robot"></span>
-            <span>Jadwal</span>
-        </a>
         <a href="pembayaran.php" class="menu-item" data-page="pembayaran">
             <span class="icon"><img src="../robot.png" alt="robot"></span>
             <span>pembayaran</span>

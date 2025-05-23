@@ -1,5 +1,7 @@
 <?php
 include "../db.php";
+include "edit.php";
+include "../notification.php";
 if (isset($_POST['id'])) {
     $id = $_POST['id'];
 
@@ -12,7 +14,7 @@ if (isset($_POST['id'])) {
     $stmts = false;
 
     // Tampilkan foto jika ada
-if (!empty($row['hasil_karya']) && file_exists("../uploads/" . $row['hasil_karya'])) {
+    if (!empty($row['hasil_karya']) && file_exists("../uploads/" . $row['hasil_karya'])) {
         echo "<p>Hasil karya sudah diunggah:</p>";
         echo "<img src='../uploads/" . $row['hasil_karya'] . "' width='200'><br><br>";
     } else {
@@ -34,15 +36,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['photo'])) {
         $stmts->bind_param("ss", $filename, $id);
         $stmts->execute();
 
-        echo "Foto berhasil diunggah!<br>";
+        setNotification("Foto berhasil diunggah!<br>", $type = "success");
         echo "<img src='../uploads/" . $filename . "' width='200'>";
     } else {
-        echo "Gagal mengunggah foto.";
+        showNotification("Gagal mengunggah foto.", "error");
     }
 }
 if ($stmts) {
     header("Location: /Digikidz/koordinator/presensi.php");
-exit();
+    exit();
 }
 $db->close();
 ?>
@@ -50,5 +52,5 @@ $db->close();
 <form action='foto.php' method='post' enctype='multipart/form-data'>
     <input type='hidden' name='id' value='<?php echo htmlspecialchars($id); ?>'>
     <input type='file' name='photo' accept='image/*' capture='camera' required><br><br>
-    <input type='submit' value='Upload Foto'>
+    <button type='submit' class="btn-confirm"> Upload Foto</button>
 </form>

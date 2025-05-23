@@ -17,6 +17,7 @@ if (isset($_POST['login'])) {
     if ($ambil) {
         if ($password == $ambil['password']) {
             $_SESSION['nama'] = $nama;
+            $_SESSION['id'] = $ambil['id_siswa'];
             header("Location: siswa/siswa.php");
             exit;
         } else {
