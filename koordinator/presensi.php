@@ -13,47 +13,95 @@
 
 <div class="main-container">
     <div class="header">
-        <h3>Hasil presensi</h3>
+        <h3>Hasil Presensi</h3>
     </div>
 
-    <div class="conten">
-        <div class="session">
-            <table>
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Program & Level</th>
-                    <th>Materi</th>
-                    <th>Pertemuan</th>
-                    <th>Tanggal</th>
-                    <th>Hasil Karya</th>
-                </tr>
+    <div class="section">
+        <h3>Sortir Hasil Presensi</h3>
+        <form method="get" action="#pembayaran">
+
+            <!-- Nama Dropdown -->
+            <label for="sort_nama">Pilih Nama:</label>
+            <select name="sort_nama" id="sort_nama">
+                <option value="">Semua Nama</option>
                 <?php
-                $data = mysqli_query($db, "SELECT * FROM hasil_presensi");
-                $no = 1;
-                while ($row = mysqli_fetch_array($data)) {
-                    echo "<tr>
-                        <td>{$no}</td>
-                        <td>" . htmlspecialchars($row['nama']) . "</td>
-                        <td>" . htmlspecialchars($row['program']) . "</td>
-                        <td>" . htmlspecialchars($row['materi']) . "</td>
-                        <td>" . htmlspecialchars($row['pertemuan']) . "</td>
-                        <td>" . htmlspecialchars($row['tanggal']) . "</td>
-                        <td>";
-
-                    if (!empty($row['hasil_karya']) && file_exists("../uploads/" . $row['hasil_karya'])) {
-                        echo "<a href='../uploads/" . htmlspecialchars($row['hasil_karya']) . "' target='_blank'>
-                                <img src='../uploads/" . htmlspecialchars($row['hasil_karya']) . "' width='60' height='80' style='object-fit:cover; cursor:pointer;'>
-                              </a>";
-                    } else {
-                        echo "<button class='foto-btn' data-id='" . htmlspecialchars($row['id_presensi']) . "' style='width:60px;height:80px;'>Foto</button>";
-                    }
-
-                    echo "</td></tr>";
-                    $no++;
+                $nama_query = mysqli_query($db, "SELECT DISTINCT nama FROM hasil_presensi ORDER BY nama ASC");
+                while ($nama_row = mysqli_fetch_assoc($nama_query)) {
+                    $selected = ($_GET['sort_nama'] ?? '') == $nama_row['nama'] ? 'selected' : '';
+                    echo "<option value='" . htmlspecialchars($nama_row['nama']) . "' $selected>" . htmlspecialchars($nama_row['nama']) . "</option>";
                 }
                 ?>
-            </table>
+            </select>
+
+            <!-- Program Dropdown -->
+            <label for="sort_program">Pilih Program:</label>
+            <select name="sort_program" id="sort_program">
+                <option value="">Semua Program</option>
+                <option value="computer" <?= ($_GET['sort_program'] ?? '') == 'computer' ? 'selected' : '' ?>>Computer
+                </option>
+                <option value="art" <?= ($_GET['sort_program'] ?? '') == 'art' ? 'selected' : '' ?>>Art</option>
+                <option value="robotik" <?= ($_GET['sort_program'] ?? '') == 'robotik' ? 'selected' : '' ?>>Robotik
+                </option>
+            </select>
+
+            <input type="submit" class="submit-btn" value="Sortir">
+        </form>
+
+        <?php
+        // Ambil filter dari GET
+        $sort_program = $_GET['sort_program'] ?? '';
+        $sort_nama = $_GET['sort_nama'] ?? '';
+
+        // Bangun query
+        $query = "SELECT * FROM hasil_presensi WHERE 1=1";
+        if (!empty($sort_program)) {
+            $query .= " AND program = '" . mysqli_real_escape_string($db, $sort_program) . "'";
+        }
+        if (!empty($sort_nama)) {
+            $query .= " AND nama = '" . mysqli_real_escape_string($db, $sort_nama) . "'";
+        }
+
+        $sql = mysqli_query($db, $query);
+        ?>
+
+        <div class="conten">
+            <div class="session">
+                <table>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Program</th>
+                        <th>Materi</th>
+                        <th>Pertemuan</th>
+                        <th>Tanggal</th>
+                        <th>Hasil Karya</th>
+                    </tr>
+                    <?php
+                    $no = 1;
+                    while ($row = mysqli_fetch_array($sql)) {
+                        echo "<tr>
+                            <td>{$no}</td>
+                            <td>" . htmlspecialchars($row['nama']) . "</td>
+                            <td>" . htmlspecialchars($row['program']) . "</td>
+                            <td>" . htmlspecialchars($row['materi']) . "</td>
+                            <td>" . htmlspecialchars($row['pertemuan']) . "</td>
+                            <td>" . htmlspecialchars($row['tanggal']) . "</td>
+                            <td>";
+
+                        if (!empty($row['hasil_karya']) && file_exists("../uploads/" . $row['hasil_karya'])) {
+                            echo "<a href='../uploads/" . htmlspecialchars($row['hasil_karya']) . "' target='_blank'>
+                                <img src='../uploads/" . htmlspecialchars($row['hasil_karya']) . "' width='60' height='80' style='object-fit:cover; cursor:pointer;'>
+                              </a>";
+                        } else {
+                            echo "<button class='foto-btn' data-id='" . htmlspecialchars($row['id']) . "' style='width:60px;height:80px;'>Foto</button>";
+                        }
+
+                        echo "</td></tr>";
+                        $no++;
+                    }
+                    ?>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -69,7 +117,6 @@
     </div>
 </div>
 
-<!-- JavaScript AJAX untuk modal -->
 <script>
     document.querySelectorAll('.foto-btn').forEach(button => {
         button.addEventListener('click', function () {
