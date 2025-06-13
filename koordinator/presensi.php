@@ -90,7 +90,7 @@
                                     <img src='../uploads/" . htmlspecialchars($row['hasil_karya']) . "' width='60' height='80' style='object-fit:cover; cursor:pointer;'>
                                   </a>";
                         } else {
-                            echo "<button class='foto-btn' data-id='" . htmlspecialchars($row['id']) . "' style='width:60px;height:80px;'>Foto</button>";
+                            echo "<button class='foto-btn' data-id='" . htmlspecialchars($row['id_presensi']) . "' style='width:60px;height:80px;'>Foto</button>";
                         }
 
                         echo "</td></tr>";

@@ -18,20 +18,12 @@
     <div class="conten">
         <div class="section">
             <form action="#harga" method="post">
-                <label for="program">Program:</label><br>
-                <select name="program" id="program" required>
-                    <option value="">-- Pilih Program --</option>
+                <label for="category">Category:</label><br>
+                <select name="category" id="category" required>
+                    <option value="">-- Pilih Category Program --</option>
                     <option value="Computer">Computer</option>
                     <option value="Art">Art</option>
                     <option value="Robotik">Robotik</option>
-                </select><br>
-
-                <label for="level">Level:</label><br>
-                <select name="level" id="level" required>
-                    <option value="">-- Pilih Level --</option>
-                    <option value="Level 1">Level 1</option>
-                    <option value="Level 2">Level 2</option>
-                    <option value="Registrasi">Registrasi</option>
                 </select><br>
 
                 <label for="harga">Harga (Rp):</label><br>
@@ -47,12 +39,11 @@
                 $cekid = mysqli_fetch_array($q1);
                 $id = ($cekid[0] == 0) ? 1 : $cekid[0] + 1;
 
-                $program = $_POST['program'];
-                $level = $_POST['level'];
+                $category = $_POST['category'];
                 $harga = $_POST['harga'];
 
-                $sql = mysqli_query($db, "INSERT INTO harga (id_harga, program, level, harga) 
-                                      VALUES ('$id', '$program', '$level', '$harga')");
+                $sql = mysqli_query($db, "INSERT INTO category (id_harga, category, harga) 
+                                      VALUES ('$id', '$category', '$harga')");
 
                 echo $sql ? "✅ Harga berhasil ditambahkan" : "❌ Gagal menyimpan data";
             }
@@ -62,7 +53,7 @@
         <div class="section">
             <h3>Sortir Harga</h3>
             <form method="get" action="#harga">
-                <label for="sort_program">Pilih Program:</label>
+                <label for="sort_program">Pilih Category Program:</label>
                 <select name="sort_program" id="sort_program">
                     <option value="">Semua Program</option>
                     <option value="Computer">Computer</option>
@@ -85,7 +76,7 @@
             <?php
             $sort_program = isset($_GET['sort_program']) ? $_GET['sort_program'] : '';
             $sort_level = isset($_GET['sort_level']) ? $_GET['sort_level'] : '';
-            $query = "SELECT * FROM harga WHERE 1=1";
+            $query = "SELECT * FROM category WHERE 1=1";
             if (!empty($sort_program))
                 $query .= " AND program = '$sort_program'";
             if (!empty($sort_level))
@@ -97,17 +88,15 @@
                 style="width: 100%; max-height: 100vh; overflow-y: auto; margin-top: 10px; padding: 5px; box-shadow: steelblue 2px 2px 2px;">
                 <table border="1">
                     <tr>
-                        <th>No</th>
-                        <th>Program</th>
-                        <th>Level</th>
+                        <th>ID</th>
+                        <th>category</th>
                         <th>Harga</th>
                         <th>aksi</th>
                     </tr>
                     <?php while ($row = mysqli_fetch_array($sql)) { ?>
                         <tr>
                             <td><?php echo $row['id_harga']; ?></td>
-                            <td><?php echo $row['program']; ?></td>
-                            <td><?php echo $row['level']; ?></td>
+                            <td><?php echo $row['category']; ?></td>
                             <td>Rp<?php echo number_format($row['harga'], 0, ',', '.'); ?></td>
                             <td> <a href="edit_siswa.php?=<?php echo $row['username'] ?>"><button
                                         class="btn-edit">Edit</button></a>

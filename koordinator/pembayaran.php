@@ -7,7 +7,8 @@
     <?php
     session_start();
     include "sidebar2.php";
-    include "../db.php" ?>
+    include "../db.php" 
+    ?>
 
 </div>
 <div class="main-container">
@@ -23,25 +24,33 @@
                     <?php
                      $result = mysqli_query($db, "SELECT siswa.id_siswa, siswa.nama, 
                                     GROUP_CONCAT(ambilprogram.program) AS program_list,
-                                    SUM(ambilprogram.tagihan) AS total_tagihan
-                                    FROM siswa JOIN ambilprogram ON siswa.id_siswa = ambilprogram.id_siswa GROUP BY siswa.id_siswa
+                                    SUM(ambilprogram.tagihan) AS total_tagihan, ambilprogram.tanggal AS tanggal_display,
+                                    program.`MONTH OF CERTIFICATED`as bulan,
+                                    category.category, category.harga as biaya_registrasi
+                                    FROM siswa  JOIN ambilprogram ON siswa.id_siswa = ambilprogram.id_siswa 
+                                                JOIN program ON ambilprogram.program = program.PROGRAM
+                                                JOIN category ON program.category = category.category
+                                    GROUP BY siswa.id_siswa;
                                 ");
 
                         if (mysqli_num_rows($result) > 0) {
                             while ($row = mysqli_fetch_assoc($result)) {
                                     $programList = $row['program_list'];
                                     $programs = explode(",", $programList);
-
-                                    // Hapus "C." dari setiap program
                                     $displayPrograms = array_map(function($prog) {
                                         $parts = explode(".", $prog);
                                         return isset($parts[1]) ? $parts[1] : $prog;
                                     }, $programs);
-                                    
+                                    $tanggalbulan = $row['bulan'];
+                                    $pecah = explode("-", $tanggalbulan);
+                                    $ambilbulan = (int)$pecah[1];
                                     echo '<option value="' . $row['id_siswa'] . '" 
                                         data-nama="' . $row['nama'] . '"
                                         data-program="' . $programList . '"
-                                        data-tagihan="' . $row['total_tagihan'] . '">' 
+                                        data-tagihan="' . $row['total_tagihan'] . '"
+                                        data-ambilbulan="' . $row['bulan'] . '"
+                                        data-tanggal_display="' . $row['tanggal_display'] . '"
+                                        >' 
                                         . $row['nama'] . '</option>';
                                 }
 
@@ -49,11 +58,16 @@
                         } else {
                             echo '<option value="">(Belum ada siswa terdaftar)</option>';
                         }
+
+
+
                     ?>
                 </select><br>
                     <input type="hidden" name="nama_siswa_text" id="nama_siswa_text" required>
                     <input type="hidden" name="program" id="program" readonly>
-
+                    <input type="hidden" name="ambilbulan" id="ambilbulan" readonly>
+                    <input type="hidden" name="tanggal_display" id="tanggal_display" readonly>
+                    <input type="hidden" name="bulansaja" id="bulansaja" readonly>
                     <label>Tanggal Pembayaran:</label><br>
                     <input type="date" name="tanggal" required><br>
 
@@ -69,6 +83,30 @@
                 </form>
 
             <?php
+            if (isset($_FILES['bukti']) && $_FILES['bukti']['error'] === 0) {
+    $file_name = basename($_FILES["bukti"]["name"]);
+    $target_dir = "../uploads/";
+    $target_file = $target_dir . $file_name;
+
+    // Pastikan hanya JPG, JPEG, PNG, GIF yang diizinkan
+    $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+    $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
+
+    if (in_array($file_type, $allowed_types)) {
+        if (move_uploaded_file($_FILES["bukti"]["tmp_name"], $target_file)) {
+            $bukti = $file_name;
+        } else {
+            echo "❌ Gagal mengunggah file.";
+            $bukti = '';
+        }
+    } else {
+        echo "❌ Format file tidak didukung.";
+        $bukti = '';
+    }
+} else {
+    $bukti = '';
+}
+
         if (isset($_POST['submit_pembayaran'])) {
             $q1 = mysqli_query($db, "SELECT count(id_pembayaran) FROM pembayaran");
             $cekid = mysqli_fetch_array($q1);
@@ -93,7 +131,37 @@
             if (mysqli_num_rows($ambilPrograms) === 0) {
                 echo "Maaf, siswa ini tidak memiliki tagihan.";
             }
+        $sppBulanan = 0;
+        $bulanRegis = 6; // Ambil dari data tanggal atau simpan dari input hidden
+        $rentangBulan = [];
 
+        $sqlProgram = mysqli_query($db, "SELECT tagihan, program, tanggal FROM ambilprogram 
+            WHERE id_siswa = '$id_siswa' ORDER BY program ASC LIMIT 1");
+
+        if ($rp = mysqli_fetch_assoc($sqlProgram)) {
+            $totalTagihan = (int)$rp['tagihan'];
+            $ambilBulan = (int)$_POST['ambilbulan'];
+            $bulanRegis = (int)$_POST['bulansaja'];
+            $sppBulanan = $totalTagihan / $ambilBulan;
+
+            // Hitung berapa bulan lunas
+            $bulanTerbayar = floor($jumlah_bayar / $sppBulanan);
+            $nama_bulan = [
+                1 => "Januari", 2 => "Februari", 3 => "Maret", 4 => "April", 5 => "Mei",
+                6 => "Juni", 7 => "Juli", 8 => "Agustus", 9 => "September", 10 => "Oktober",
+                11 => "November", 12 => "Desember"
+            ];
+
+            $bulan_sisa = [];
+            for ($i = $bulanTerbayar; $i < $ambilBulan; $i++) {
+                $index = ($bulanRegis + $i - 1) % 12 + 1;
+                $bulan_sisa[] = $nama_bulan[$index];
+            }
+
+            $bulan_sisa_str = implode(" - ", $bulan_sisa);
+            echo "<script>alert('Sisa Tagihan Rp " . ($totalTagihan - $jumlah_bayar) .
+                "\\nSpp Bulanan (" . ($bulan_sisa_str ? $bulan_sisa_str : "Semua Lunas") . ")');</script>";
+        }
             while ($row = mysqli_fetch_assoc($ambilPrograms)) {
                 $id_ambil = $row['id_ambil'];
                 $program = $row['program'];
@@ -115,15 +183,10 @@
 
                 // Simpan pembayaran
                 $sql = mysqli_query($db, "INSERT INTO pembayaran 
-                    (id_pembayaran, nama_siswa, program, tanggal, jumlah_bayar, status, bukti)
-                    VALUES ('$id', '$nama_siswa', '$program', '$tanggal', '$dibayar', '$status', '$bukti')");
+                    (id_pembayaran, nama_siswa, program, bulan_bayar, tanggal, jumlah_bayar, status, bukti)
+                    VALUES ('$id', '$nama_siswa', '$program', '$bulan_bayar', '$tanggal', '$dibayar', '$status', '$bukti')");
                 
                 $id++;
-            }
-
-            if ($sql) {
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit();
             }
         }
         ?>
@@ -144,6 +207,9 @@
 
             <label>Program:</label><br>
             <input type="text" value="<?= $data['program'] ?>" disabled><br>
+
+            <label>Bulan:</label><br>
+            <input type="text" value="<?= $data['bulan_bayar'] ?>" disabled><br>
 
             <label>Tanggal:</label><br>
             <input type="date" value="<?= $data['tanggal'] ?>" disabled><br>
@@ -179,6 +245,7 @@
 
     $jumlah_bayar_lama = (int)$data_old['jumlah_bayar'];
     $program = $data_old['program'];
+    $bulan_bayar = $data_old['bulan_$bulan_bayar'];
     $nama_siswa = $data_old['nama_siswa'];
 
     // Ambil ID siswa berdasarkan nama
@@ -203,13 +270,6 @@
         SET tagihan = tagihan - $jumlah_bayar_baru 
         WHERE id_siswa = '$id_siswa' AND program = '$program'
     ");
-
-    if($update) {
-        header("Location: ".$_SERVER['PHP_SELF']);
-        exit();
-    } else {
-        echo "❌ Gagal memperbarui data.";
-    }
 }
 
     // Handle hapus
@@ -223,6 +283,7 @@
     if ($data) {
         $jumlah_bayar = (int)$data['jumlah_bayar'];
         $program = $data['program'];
+        $bulan_bayar = $data['bula$bulan_bayar'];
         $nama_siswa = $data['nama_siswa'];
         $bukti = $data['bukti'];
 
@@ -245,12 +306,6 @@
         // Hapus data dari tabel pembayaran
         $delete = mysqli_query($db, "DELETE FROM pembayaran WHERE id_pembayaran = '$id'");
 
-        if ($delete) {
-            header("Location: ".$_SERVER['PHP_SELF']);
-            exit();
-        } else {
-            echo "❌ Gagal menghapus data.";
-        }
     }
 }
     ?>
@@ -267,14 +322,26 @@
                     <option value="robotik">Robotik</option>
                 </select>
 
+                <label for="sort_lunas">Pilih Lunas:</label>
+                <select name="sort_lunas" id="sort_lunas">
+                    <option value="">Semua</option>
+                    <option value="Lunas">Lunas</option>
+                    <option value="Belum Lunas">Belum Lunas</option>
+                </select>
+
                 <input type="submit" class="submit-btn" value="Sortir">
             </form>
 
             
             <?php
             $sort_program = $_GET['sort_program'] ?? '';
+            $sort_lunas = $_GET['sort_lunas'] ?? '';
             $query = "SELECT pembayaran.*, program.category FROM pembayaran JOIN program ON pembayaran.program = program.program WHERE 1=1";
-            if (!empty($sort_program)) $query .= " AND program.category = '$sort_program'";
+            if (!empty($sort_program)) 
+            $query .= " AND program.category = '$sort_program'";
+            if (!empty($sort_lunas)) {
+            $query .= " AND pembayaran.status = '$sort_lunas'";
+            }
             $sql = mysqli_query($db, $query);
             ?>
 
@@ -284,7 +351,8 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Siswa</th>
-                        <th>Program</th>
+                        <th>Program</th>                        
+                        <th>Bulan</th>
                         <th>Tanggal</th>
                         <th>Jumlah Bayar</th>
                         <th>Status</th>
@@ -295,7 +363,8 @@
                         <tr>
                             <td><?= $row['id_pembayaran']; ?></td>
                             <td><?= $row['nama_siswa']; ?></td>
-                            <td><?= $row['program']; ?></td>
+                            <td><?= $row['program']; ?></td>                            
+                            <td><?= $row['bulan_bayar']; ?></td>
                             <td><?= $row['tanggal']; ?></td>
                             <td>Rp<?= number_format($row['jumlah_bayar'], 0, ',', '.'); ?></td>
                             <td><?= $row['status']; ?></td>
@@ -317,20 +386,37 @@
         </div>
     </div>
 </div>
-
+<script src="../jsrefresh.js"></script>
 <script>
     document.getElementById('nama_siswa').addEventListener('change', function () {
         const selectedOption = this.options[this.selectedIndex];
         const program = selectedOption.getAttribute('data-program');
         const nama = selectedOption.getAttribute('data-nama');
         const tagihan = selectedOption.getAttribute('data-tagihan');
-
+        const ABulan = selectedOption.getAttribute('data-ambilbulan');
+        const sppbulanan = tagihan/ABulan;
+        const tanggalDisplay = selectedOption.getAttribute('data-tanggal_display');
+        const bulansaja = parseInt(tanggalDisplay.split("-")[1]);
+        const nama_bulan = [
+            "", "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
+        const namaBulan = nama_bulan[bulansaja];
+        const bulanList = [];
+        for (let i = 0; i < ABulan; i++) {
+            let index = (bulansaja + i - 1) % 12 + 1; // +1 karena array dimulai dari 1
+            bulanList.push(nama_bulan[index]);
+        }
+        const rentangBulan = bulanList.join(" - ");
         const infoTagihan = document.getElementById('info_tagihan');
 
         // Jika belum memilih siswa
         if (this.value === "") {
             document.getElementById('program').value = "";
             document.getElementById('nama_siswa_text').value = "";
+            document.getElementById('tanggal_display').value = "";
+            document.getElementById('ambilbulan').value = "";
+            document.getElementById('bulansaja').value = "";
             infoTagihan.innerHTML = "<span style='color:red;'>Kamu belum memilih siswa</span>";
             return;
         }
@@ -338,10 +424,50 @@
         // Jika siswa dipilih
         document.getElementById('program').value = program;
         document.getElementById('nama_siswa_text').value = nama;
-
+        document.getElementById('ambilbulan').value = ABulan;
+        document.getElementById('bulansaja').value = bulansaja;
+        document.getElementById('tanggal_display').value = tanggalDisplay;
         infoTagihan.innerHTML = `
             Program : ${program}<br>
-            Total Tagihan: Rp${parseInt(tagihan).toLocaleString('id-ID')}
+            Rentang Bulan : ${rentangBulan}<br>
+            Bulan Regis : ${namaBulan}<br>
+            Total Tagihan : Rp${parseInt(tagihan).toLocaleString('id-ID')}<br>
+            Spp bulanan : Rp${parseInt(sppbulanan).toLocaleString('id-ID')}<br>
+            Tanggal Registrasi : ${tanggalDisplay}
         `;
     });
+    document.getElementById('jumlah_bayar').addEventListener('input', function () {
+    const bayar = parseInt(this.value);
+    if (isNaN(bayar) || bayar <= 0) return;
+
+    const tagihan = parseInt(document.getElementById('nama_siswa').selectedOptions[0].getAttribute('data-tagihan'));
+    const ABulan = parseInt(document.getElementById('ambilbulan').value);
+    const bulansaja = parseInt(document.getElementById('bulansaja').value);
+    const sppbulanan = tagihan / ABulan;
+
+    const bulanTerbayar = Math.floor(bayar / sppbulanan);
+    const sisaTagihan = tagihan - bayar;
+
+    const nama_bulan = [
+        "", "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+    const bulanList = [];
+    for (let i = bulanTerbayar; i < ABulan; i++) {
+        let index = (bulansaja + i - 1) % 12 + 1;
+        bulanList.push(nama_bulan[index]);
+    }
+
+    const sisaBulan = bulanList.join(" - ") || "Semua Lunas";
+    const infoTagihan = document.getElementById('info_tagihan');
+
+    infoTagihan.innerHTML += `
+        <br><strong>Pembayaran Saat Ini:</strong><br>
+        Dibayar : Rp${bayar.toLocaleString('id-ID')}<br>
+        Sisa Tagihan : Rp${sisaTagihan.toLocaleString('id-ID')}<br>
+        Spp Bulanan (${sisaBulan})
+    `;
+});
+
     </script>
