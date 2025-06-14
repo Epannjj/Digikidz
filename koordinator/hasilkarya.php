@@ -1,15 +1,20 @@
 <style>
-    <?php include "../styles.css"; ?>
+    <?php
+    session_start();
+    include "../styles.css"; ?>
 </style>
 
 <div class="sidebar-placeholder">
-        <a href="karyawan.php" class="menu-item" style="" data-page="karyawan">
-            <span class="icon"></span>
-            <span>karyawan</span>
+
     <?php
-    session_start();
-    // include "sidebar2.php";
-    include "../db.php";
+    include "sidebar2.php";
+
+    include "../db.php" ?>
+
+</div>
+<?php
+// include "sidebar2.php";
+include "../db.php";
 $uploadsDir = '../uploads';
 $zipFileName = 'uploads_' . date('Ymd_His') . '.zip';
 
@@ -63,36 +68,38 @@ if (isset($_POST['delete_files'])) {
     <div class="header">
         <h3>Foto hasil karya</h3>
     </div>
-<hr>
-<div style="display: flex; flex-wrap: wrap; gap: 10px;">
-    <?php
-    $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-    $files = glob($uploadsDir . '/*');
+    <hr>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        <?php
+        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $files = glob($uploadsDir . '/*');
 
-    if ($files) {
-        foreach ($files as $file) {
-            $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-            if (in_array($ext, $allowed_ext)) {
-                $filename = basename($file);
-                echo '<div style="text-align:center; margin:10px;">';
-                echo '<img src="' . $uploadsDir . '/' . $filename . '" alt="' . $filename . '" style="max-width:150px; max-height:150px; display:block;">';
-                echo '<small>' . $filename . '</small>';
-                echo '</div>';
+        if ($files) {
+            foreach ($files as $file) {
+                $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                if (in_array($ext, $allowed_ext)) {
+                    $filename = basename($file);
+                    echo '<div style="text-align:center; margin:10px;">';
+                    echo '<img src="' . $uploadsDir . '/' . $filename . '" alt="' . $filename . '" style="max-width:150px; max-height:150px; display:block;">';
+                    echo '<small>' . $filename . '</small>';
+                    echo '</div>';
+                }
             }
+        } else {
+            echo "<p>Tidak ada gambar di folder uploads.</p>";
         }
-    } else {
-        echo "<p>Tidak ada gambar di folder uploads.</p>";
-    }
-    ?>
-</div>
+        ?>
+    </div>
 
 
     <form method="post">
         <button type="submit" name="download_zip">Download Semua Gambar (.zip)</button>
     </form> <br>
-   <form method="post" onsubmit="return confirm('Yakin ingin menghapus semua gambar di folder uploads?');">
+    <form method="post" onsubmit="return confirm('Yakin ingin menghapus semua gambar di folder uploads?');">
         <button type="submit" name="delete_files">Hapus Semua Gambar</button>
     </form>
-    <p style="background-color: #fff3cd; border-left: 6px solid #ffc107; padding: 10px; font-size: 14px; border-radius: 5px; margin-top: 10px;">
-    <strong>📢 Penting!</strong> Jangan lupa untuk <strong>mendownload backup gambar</strong> terlebih dahulu sebelum menghapusnya. agar menghemat ruang penyimpanan server.!
-    </p>  
+    <p
+        style="background-color: #fff3cd; border-left: 6px solid #ffc107; padding: 10px; font-size: 14px; border-radius: 5px; margin-top: 10px;">
+        <strong>📢 Penting!</strong> Jangan lupa untuk <strong>mendownload backup gambar</strong> terlebih dahulu
+        sebelum menghapusnya. agar menghemat ruang penyimpanan server.!
+    </p>

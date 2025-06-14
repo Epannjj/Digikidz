@@ -1,11 +1,12 @@
 <style>
-    <?php include "../styles.css"; ?>
+    <?php
+    session_start();
+    include "../styles.css"; ?>
 </style>
 
 <div class="sidebar-placeholder">
 
     <?php
-    session_start();
     include "sidebar2.php";
 
     include "../db.php" ?>
@@ -14,46 +15,50 @@
 
 <div class="main-container">
     <div class="header">
-        <h3>Materi</h3>
+        <h3>program</h3>
     </div>
     <div class="conten">
         <div class="section">
             <div class="formpresensi">
-                <form action="#materi" method="post" enctype="multipart/form-data">
-                    <label for="nama">Nama Materi:</label><br>
-                    <input type="text" id="nama_materi" name="nama_materi" required><br>
-                    <label for="nama">program:</label><br>
-                    <input type="text" id="program" name="program" required><br>
-                    <label for="nama">level:</label><br>
-                    <input type="text" id="level" name="level" required><br>
-                    <label for="nama">pertemuan:</label><br>
-                    <input type="text" id="pertemuan" name="pertemuan" required><br>
-                    <label for="nama">modul:</label><br>
-                    <input type="file" id="modul" name="modul" required><br>
-                    <input type="submit" value="Submit" class="submit-btn" name="submit_materi">
+                <form action="#program" method="post" enctype="multipart/form-data">
+                    <label for="nama">Nama program:</label><br>
+                    <input type="text" id="nama_program" name="nama_program" required><br>
+                    <label for="Kategori">Kategori</label><br>
+                    <select name="kategori" id="kategori">
+                        <option value="Coding">Coding</option>
+                        <option value="Art">Art</option>
+                        <option value="Robotik">Robotik</option>
+                    </select>
+                    <label for="week_opr">Week Of Progress Report:</label><br>
+                    <input type="text" id="week_report" name="week_report" required><br>
+                    <label for="week_opr">Week Of Progress Report:</label><br>
+                    <input type="text" id="week_report" name="week_report" required><br>
+                    <label for="week_opr">Week Of Progress Report:</label><br>
+                    <input type="text" id="week_report" name="week_report" required><br>
+                    <input type="submit" value="Submit" class="submit-btn" name="submit_program">
                 </form>
                 <?php
                 include "../db.php";
-                if (isset($_POST['submit_materi'])) {
-                    $q1 = mysqli_query($db, "SELECT count(id_materi) FROM materi MAX");
+                if (isset($_POST['submit_program'])) {
+                    $q1 = mysqli_query($db, "SELECT count(id_program) FROM program MAX");
                     $cekid = mysqli_fetch_array($q1);
                     if ($cekid[0] == 0) {
                         $id = 1;
                     } else {
                         $id = $cekid[0] + 1;
                     }
-                    $nama_materi = $_POST['nama_materi'];
+                    $nama_program = $_POST['nama_program'];
                     $program = $_POST['program'];
                     $level = $_POST['level'];
                     $pertemuan = $_POST['pertemuan'];
                     $modul = time() . '_' . basename($_FILES["modul"]['name']);
                     $lokasi_file = $_FILES['modul']['tmp_name'];
                     move_uploaded_file($lokasi_file, "modul/$modul");
-                    $sql = mysqli_query($db, "INSERT INTO materi (id_materi, judul_materi, program, `level`, pertemuan, modul) VALUES ('$id', '$nama_materi', '$program', '$level', '$pertemuan', '$modul')");
+                    $sql = mysqli_query($db, "INSERT INTO program (id_program, judul_program, program, `level`, pertemuan, modul) VALUES ('$id', '$nama_program', '$program', '$level', '$pertemuan', '$modul')");
                     if ($sql) {
-                        echo "Materi berhasil ditambahkan";
+                        echo "program berhasil ditambahkan";
                     } else {
-                        echo "Materi gagal ditambahkan";
+                        echo "program gagal ditambahkan";
                     }
                 }
                 ?>
@@ -61,14 +66,17 @@
         </div>
         <div class="section">
             <div class="sort" style="display:flex;flex-direction: column;">
-                <h3>Sortir Materi</h3>
-                <form method="get" action="#materi">
+                <h3>Sortir program</h3>
+                <form method="get" action="#program">
                     <label for="sort_program">Pilih Program:</label>
                     <select name="sort_program" id="sort_program">
-                        <option value="">Semua Program</option>
-                        <option value="Coding">Coding</option>
-                        <option value="Art">Art</option>
-                        <option value="Robotik">Robotik</option>
+                        <?php
+                        $program_query = mysqli_query($db, "SELECT DISTINCT program FROM program ORDER BY program ASC");
+                        while ($program_row = mysqli_fetch_assoc($program_query)) {
+                            $selected = ($_GET['sort_program'] ?? '') == $program_row['program'] ? 'selected' : '';
+                            echo "<option value='" . htmlspecialchars($program_row['program']) . "' $selected>" . htmlspecialchars($program_row['program']) . "</option>";
+                        }
+                        ?>
                     </select>
 
                     <label for="sort_level">Pilih Level:</label>
@@ -84,7 +92,7 @@
                 <?php
                 $sort_program = isset($_GET['sort_program']) ? $_GET['sort_program'] : '';
                 $sort_level = isset($_GET['sort_level']) ? $_GET['sort_level'] : '';
-                $query = "SELECT * FROM materi WHERE 1=1";
+                $query = "SELECT * FROM program WHERE 1=1";
                 if (!empty($sort_program)) {
                     $query .= " AND program = '$sort_program'";
                 }
@@ -97,23 +105,26 @@
                     style="width: 100%; max-height: 100vh; overflow-y: auto; margin-top: 10px; padding: 5px; box-shadow: steelblue 2px 2px 2px;">
                     <table border="1">
                         <tr>
-                            <th>No Materi</th>
-                            <th>Nama Materi</th>
-                            <th>Program</th>
-                            <th>Level</th>
-                            <th>Pertemuan</th>
-                            <th>Modul</th>
+                            <th>No program</th>
+                            <th>Nama program</th>
+                            <th>Progress Report (month)</th>
+                            <th>jumlah pertemuan (week)</th>
+                            <th>Sertifikat (month)</th>
+                            <th>Harga</th>
                         </tr>
-                        <?php while ($row = mysqli_fetch_array($sql)) { ?>
+                        <?php
+                        $no = 1;
+                        while ($row = mysqli_fetch_array($sql)) { ?>
                             <tr>
-                                <td><?php echo $row['id_materi']; ?></td>
-                                <td><?php echo $row['judul_materi']; ?></td>
-                                <td><?php echo $row['program']; ?></td>
-                                <td><?php echo $row['level']; ?></td>
-                                <td><?php echo $row['pertemuan']; ?></td>
-                                <td><a href="modul/<?php echo $row['modul']; ?>">Download</a></td>
+                                <td><?php echo $no; ?></td>
+                                <td><?php echo $row['PROGRAM']; ?></td>
+                                <td><?php echo $row['MONTH OF PROGRESS REPORT']; ?></td>
+                                <td><?php echo $row['JUMLAH PERTEMUAN (WEEK)']; ?></td>
+                                <td><?php echo $row['MONTH OF CERTIFICATED']; ?></td>
+                                <td><?php echo $row['harga']; ?></td>
                             </tr>
-                        <?php } ?>
+                        <?php }
+                        $no++; ?>
                     </table>
                 </div>
             </div>

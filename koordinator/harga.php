@@ -13,7 +13,7 @@
 </div>
 <div class="main-container">
     <div class="header">
-        <h3>Harga Program</h3>
+        <h3>Harga Registrasi</h3>
     </div>
     <div class="conten">
         <div class="section">
@@ -98,9 +98,9 @@
                             <td><?php echo $row['id_harga']; ?></td>
                             <td><?php echo $row['category']; ?></td>
                             <td>Rp<?php echo number_format($row['harga'], 0, ',', '.'); ?></td>
-                            <td> <a href="edit_siswa.php?=<?php echo $row['username'] ?>"><button
+                            <td> <a href="edit_siswa.php?=<?php echo $row['id_harga'] ?>"><button
                                         class="btn-edit">Edit</button></a>
-                                <a href="hapus_siswa.php?=<?php echo $row['username'] ?>"><button
+                                <a href="hapus_siswa.php?=<?php echo $row['id_harga'] ?>"><button
                                         class="btn-hapus">Hapus</button></a>
                             </td>
                         </tr>

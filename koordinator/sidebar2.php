@@ -166,7 +166,7 @@
         <!-- Belom fiks ada pa ga -->
         <a href="materi.php" class="menu-item" data-page="materi">
             <span class="icon"><img src="../robot.png" alt="robot"></span>
-            <span>Materi</span>
+            <span>Program</span>
         </a>
         <a href="pembayaran.php" class="menu-item" data-page="pembayaran">
             <span class="icon"><img src="../robot.png" alt="robot"></span>
@@ -174,7 +174,7 @@
         </a>
         <a href="harga.php" class="menu-item" data-page="harga">
             <span class="icon"><img src="../robot.png" alt="robot"></span>
-            <span>Harga</span>
+            <span>Harga Registrasi</span>
         </a>
         <a href="hasilkarya.php" class="menu-item" data-page="hasilkarya">
             <span class="icon"><img src="../robot.png" alt="robot"></span>
