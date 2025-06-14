@@ -1,11 +1,10 @@
-<?php session_start(); ?>
-
 <style>
     <?php include "../styles.css"; ?>
 </style>
 
 <div class="sidebar-placeholder">
     <?php
+    session_start();
     include "sidebar2.php";
     include "../db.php";
     ?>
@@ -93,7 +92,7 @@
                                 <img src='../uploads/" . htmlspecialchars($row['hasil_karya']) . "' width='60' height='80' style='object-fit:cover; cursor:pointer;'>
                               </a>";
                         } else {
-                            echo "<button class='foto-btn' data-id='" . htmlspecialchars($row['id']) . "' style='width:60px;height:80px;'>Foto</button>";
+                            echo "<button class='foto-btn' data-id='" . htmlspecialchars($row['id_presensi']) . "' style='width:60px;height:80px;'>Foto</button>";
                         }
 
                         echo "</td></tr>";
@@ -106,29 +105,49 @@
     </div>
 </div>
 
-<!-- Modal untuk upload foto -->
-<div id="fotoModal" class="modal"
-    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.6); z-index:1000;">
-    <div class="modal-content"
-        style="background:white; margin:5% auto; padding:20px; border-radius:10px; width:90%; max-width:400px; position:relative;">
-        <span class="close"
-            style="position:absolute; top:10px; right:20px; cursor:pointer; font-weight:bold;">&times;</span>
-        <div id="modal-body">Memuat formulir...</div>
-    </div>
-</div>
+<<<<<<<<< Temporary merge branch 1 <!-- Modal untuk upload foto -->
+    <div id="fotoModal" class="modal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.6); z-index:1000;">
+        <div class="modal-content"
+            style="background:white; margin:5% auto; padding:20px; border-radius:10px; width:90%; max-width:400px; position:relative;">
+            <span class="close"
+                style="position:absolute; top:10px; right:20px; cursor:pointer; font-weight:bold;">&times;</span>
+            =========
+            <!-- Modal Upload Foto -->
+            <div id="fotoModal" class="modal"
+                style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.6); z-index:1000;">
+                <div class="modal-content"
+                    style="background:white; margin:5% auto; padding:20px; border-radius:10px; width:90%; max-width:400px; position:relative;">
+                    <span class="close"
+                        style="position:absolute; top:10px; right:20px; cursor:pointer; font-weight:bold;">&times;</span>
+                    >>>>>>>>> Temporary merge branch 2
+                    <div id="modal-body">Memuat formulir...</div>
+                </div>
+            </div>
 
-<script>
-    document.querySelectorAll('.foto-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const id = this.getAttribute('data-id');
-            const modal = document.getElementById('fotoModal');
-            const modalBody = document.getElementById('modal-body');
+            <script>
+<<<<<<<< < Temporary merge branch 1
+                document.querySelectorAll('.foto-btn').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const id = this.getAttribute('data-id');
+                        const modal = document.getElementById('fotoModal');
+                        const modalBody = document.getElementById('modal-body');
 
-            modal.style.display = 'block';
+                        modal.style.display = 'block';
+=========
+// Buka modal
+document.querySelectorAll('.foto-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const id = this.getAttribute('data-id');
+        const modal = document.getElementById('fotoModal');
+        const modalBody = document.getElementById('modal-body');
+        modal.style.display = 'block';
+>>>>>>>>> Temporary merge branch 2
 
-            const formData = new FormData();
-            formData.append('id', id);
+        const formData = new FormData();
+        formData.append('id', id);
 
+<<<<<<<<< Temporary merge branch 1
             fetch('foto.php', {
                 method: 'POST',
                 body: formData
@@ -140,11 +159,23 @@
                 .catch(err => {
                     modalBody.innerHTML = "Terjadi kesalahan saat memuat data.";
                 });
+=========
+        fetch('foto.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.text())
+        .then(data => {
+            modalBody.innerHTML = data;
+        })
+        .catch(() => {
+            modalBody.innerHTML = "Terjadi kesalahan saat memuat data.";
+>>>>>>>>> Temporary merge branch 2
         });
     });
 
-    // Tutup modal
-    document.querySelector('.close').addEventListener('click', function () {
-        document.getElementById('fotoModal').style.display = 'none';
-    });
-</script>
+// Tutup modal
+document.querySelector('.close').addEventListener('click', function () {
+    document.getElementById('fotoModal').style.display = 'none';
+});
+            </script>

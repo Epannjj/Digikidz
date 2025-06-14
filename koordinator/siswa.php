@@ -29,8 +29,8 @@
     // HAPUS siswa
     if (isset($_POST['hapus'])) {
         $id_siswa = $_POST['id_siswa'];
-
-        $delete = mysqli_query($db, "DELETE FROM siswa WHERE id_siswa='$id_siswa'");
+        $program = $_POST['program'];
+        $delete = mysqli_query($db, "DELETE FROM ambilprogram WHERE id_siswa='$id_siswa' AND program='$program'");
         if ($delete) {
             showNotification("Data siswa berhasil dihapus", "success");
         } else {
@@ -42,7 +42,7 @@
     if (isset($_POST['simpan_alternatif'])) {
         $nama = mysqli_real_escape_string($db, $_POST['nama_alternatif']);
         $program = mysqli_real_escape_string($db, $_POST['program_alternatif']);
-
+        $tanggal = date("Y-m-d");
         // Ambil ID siswa yang sudah ada berdasarkan nama
         $ambil_id_siswa = mysqli_query($db, "SELECT id_siswa FROM siswa WHERE nama = '$nama'");
         $data_siswa = mysqli_fetch_array($ambil_id_siswa);
@@ -71,7 +71,7 @@
                 $idambil = 'p' . $id_siswa_existing . '_' . time(); // Menambahkan timestamp untuk uniqueness
     
                 // Simpan ke ambilprogram saja (tidak ke tabel siswa)
-                $sql2 = mysqli_query($db, "INSERT INTO ambilprogram (id_ambil, id_siswa, program, tagihan) VALUES ('$idambil','$id_siswa_existing', '$program', '$tagihan')");
+                $sql2 = mysqli_query($db, "INSERT INTO ambilprogram (id_ambil, id_siswa, program, tagihan, tanggal) VALUES ('$idambil','$id_siswa_existing', '$program', '$tagihan', '$tanggal')");
 
                 if ($sql2) {
                     showNotification("Program berhasil ditambahkan untuk siswa $nama", "success");
@@ -107,6 +107,8 @@
                         }
                         ?>
                     </select><br>
+                    <label for="tanggal">Tanggal daftar</label>
+                    <input type="date" id="tanggal" name="tanggal" required>
 
                     <input type="submit" value="Simpan" class="submit-btn" name="simpan">
                 </form>
@@ -115,9 +117,10 @@
                 if (isset($_POST['simpan'])) {
                     $nama = mysqli_real_escape_string($db, $_POST['nama']);
                     $program = mysqli_real_escape_string($db, $_POST['program']);
+                    $tanggal = date("Y-m-d");
 
                     // Cek nama duplikat dan program yang sudah diambil
-                    $ceknama = mysqli_query($db, "SELECT siswa.id_siswa, siswa.nama, ambilprogram.program 
+                    $ceknama = mysqli_query($db, "SELECT siswa.id_siswa, siswa.nama, ambilprogram.program
                                                 FROM siswa 
                                                 JOIN ambilprogram ON siswa.id_siswa = ambilprogram.id_siswa 
                                                 WHERE siswa.nama='$nama'");
@@ -166,18 +169,18 @@
                         if ($sql) {
                             // Ambil tagihan dari tabel program
                             $idambil = 'p' . $id;
-                            $sqltagihan = mysqli_query($db, "SELECT harga FROM program WHERE program = '$program'");
+                            $sqltagihan = mysqli_query($db, "SELECT harga, `MONTH OF CERTIFICATED` FROM program WHERE program = '$program'");
                             $ctagihan = mysqli_fetch_array($sqltagihan);
-
                             if ($ctagihan) {
                                 $tagihan = $ctagihan['harga'];
+                                $brpbulan = $ctagihan['MONTH OF CERTIFICATED'];
                             } else {
                                 echo "<script>alert('Program tidak ditemukan di tabel program!');</script>";
                                 $tagihan = 0;
                             }
-
+                            $totaltagihan = $tagihan * $brpbulan;
                             // Simpan ke ambilprogram
-                            $sql2 = mysqli_query($db, "INSERT INTO ambilprogram (id_ambil, id_siswa, program, tagihan) VALUES ('$idambil','$id', '$program', '$tagihan')");
+                            $sql2 = mysqli_query($db, "INSERT INTO ambilprogram (id_ambil, id_siswa, program, tagihan, status, tanggal) VALUES ('$idambil', '$id', '$program', '$totaltagihan', 'aktif', '$tanggal')");
                             echo $sql2 ? showNotification("Data Siswa berhasil ditambahkan", "success")
                                 : showNotification("Data tagihan gagal ditambahkan", "error");
                         } else {
@@ -196,11 +199,12 @@
                         <th>Nama Siswa</th>
                         <th>Password</th>
                         <th>Program</th>
+                        <th>Tanggal daftar</th>
                         <th>Aksi</th>
                         <th>QR Code</th>
                     </tr>
                     <?php
-                    $data = mysqli_query($db, "SELECT siswa.*, ambilprogram.program FROM `siswa` JOIN `ambilprogram` ON siswa.id_siswa = ambilprogram.id_siswa ORDER BY siswa.nama;");
+                    $data = mysqli_query($db, "SELECT siswa.*, ambilprogram.program, ambilprogram.tanggal FROM `siswa` JOIN `ambilprogram` ON siswa.id_siswa = ambilprogram.id_siswa ORDER BY siswa.nama;");
                     $no = 1;
                     while ($row = mysqli_fetch_array($data)) { ?>
                         <tr>
@@ -208,6 +212,7 @@
                             <td><?php echo $row['nama']; ?></td>
                             <td><?php echo $row['password']; ?></td>
                             <td><?php echo $row['program']; ?></td>
+                            <td><?php echo $row['tanggal']; ?></td>
                             <td>
                                 <button class="btn-edit"
                                     onclick="showEditForm('<?php echo $row['id_siswa']; ?>', '<?php echo $row['nama']; ?>','<?php echo $row['password']; ?>')">Edit</button>
@@ -256,6 +261,7 @@
                     <p id="deleteMessage">Apakah Anda yakin ingin menghapus siswa ini?</p>
                     <form id="deleteForm" action="" method="POST">
                         <input type="hidden" id="delete_id_siswa" name="id_siswa">
+                        <input type="hidden" id="delete_program" name="program">
                         <div class="popup-buttons">
                             <button type="button" class="btn-cancel" onclick="hideDeleteConfirm()">Batal</button>
                             <button type="submit" name="hapus" class="btn-delete-confirm">Hapus</button>
@@ -282,6 +288,8 @@
                                 }
                                 ?>
                             </select>
+                    <label for="tanggal">Tanggal daftar</label>
+                    <input type="date" id="tanggal" name="tanggal" required>
                         </div>
                         <div class="popup-buttons">
                             <button type="button" class="btn-cancel" onclick="hideDuplicateForm()">Batal</button>
@@ -308,10 +316,11 @@
     }
 
     // Delete Confirmation Functions
-    function showDeleteConfirm(id_siswa, nama) {
+    function showDeleteConfirm(id_siswa, program, nama) {
         document.getElementById('delete_id_siswa').value = id_siswa;
+        document.getElementById('delete_program').value = program;
         document.getElementById('deleteMessage').textContent =
-            'Apakah Anda yakin ingin menghapus siswa "' + nama + '" (' + id_siswa + ')?';
+            'Apakah Anda yakin ingin menghapus siswa "' + program + '" " (' + id_siswa + ')?';
         document.getElementById('deleteOverlay').style.display = 'flex';
     }
 

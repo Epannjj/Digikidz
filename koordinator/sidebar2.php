@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin</title>
     <style>
         body {
@@ -181,7 +176,10 @@
             <span class="icon"><img src="../robot.png" alt="robot"></span>
             <span>Harga</span>
         </a>
-
+        <a href="hasilkarya.php" class="menu-item" data-page="hasilkarya">
+            <span class="icon"><img src="../robot.png" alt="robot"></span>
+            <span>Hasil karya</span>
+        </a>
         <div class="logout">
             <a href="../logout.php">Log out</a>
         </div>

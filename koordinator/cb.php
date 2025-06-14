@@ -1,8 +1,54 @@
 <?php
 include "../db.php";
+$uploadsDir = '../uploads';
+$zipFileName = 'uploads_' . date('Ymd_His') . '.zip';
+
+if (isset($_POST['download_zip'])) {
+    $zip = new ZipArchive();
+
+    if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+        $files = glob($uploadsDir . '/*');
+
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                $zip->addFile($file, basename($file));
+            }
+        }
+
+        $zip->close();
+
+        if (file_exists($zipFileName)) {
+            header('Content-Type: application/zip');
+            header('Content-Disposition: attachment; filename="' . basename($zipFileName) . '"');
+            header('Content-Length: ' . filesize($zipFileName));
+            flush();
+            readfile($zipFileName);
+            unlink($zipFileName); // hapus file zip setelah diunduh
+            exit;
+        } else {
+            echo "ZIP file tidak dapat dibuat.";
+        }
+    } else {
+        echo "Gagal membuat file ZIP.";
+    }
+}
+
+if (isset($_POST['delete_files'])) {
+    $files = glob($uploadsDir . '/*');
+    $deleted = 0;
+
+    foreach ($files as $file) {
+        if (is_file($file)) {
+            unlink($file);
+            $deleted++;
+        }
+    }
+
+    echo "Berhasil menghapus $deleted file.";
+}
 ?>
 
-<h3>Update tagihan</h3>
+<h3>CB</h3>
 <div class="conten" style="display:flex;flex-direction: row;">
     <div class="formpresensi">
         <form action="#pembayaran" method="post" enctype="multipart/form-data">
@@ -15,8 +61,7 @@ include "../db.php";
                         while ($row = mysqli_fetch_assoc($result)) {
                             echo '<option value="' . $row['id_siswa'] . '" 
                                 data-nama="' . $row['nama'] . '"
-                                data-program="' . $row['program'] . '" 
-                                data-level="' . $row['level'] . '">' 
+                                data-program="' . $row['program'] . '">' 
                                 . $row['nama'] . '</option>';
                         }
                     } else {
@@ -73,8 +118,8 @@ include "../db.php";
             move_uploaded_file($lokasi_file, "../uploads/$bukti");
 
             $sql = mysqli_query($db, "INSERT INTO pembayaran 
-                (id_pembayaran, nama_siswa, program, level, tanggal, jumlah_bayar, status, bukti)
-                VALUES ('$id', '$nama_siswa', '$program', '$level', '$tanggal', '$jumlah_bayar', '$status', '$bukti')");
+                (id_pembayaran, nama_siswa, program, tanggal, jumlah_bayar, status, bukti)
+                VALUES ('$id', '$nama_siswa', '$program', '$tanggal', '$jumlah_bayar', '$status', '$bukti')");
 
             echo $sql ? "✅ Pembayaran berhasil ditambahkan" : "❌ Gagal menyimpan data";
         }
@@ -118,7 +163,6 @@ include "../db.php";
                     <th>No</th>
                     <th>Nama Siswa</th>
                     <th>Program</th>
-                    <th>Level</th>
                     <th>Tanggal</th>
                     <th>Jumlah Bayar</th>
                     <th>Status</th>
@@ -129,7 +173,6 @@ include "../db.php";
                         <td><?= $row['id_pembayaran']; ?></td>
                         <td><?= $row['nama_siswa']; ?></td>
                         <td><?= $row['program']; ?></td>
-                        <td><?= $row['level']; ?></td>
                         <td><?= $row['tanggal']; ?></td>
                         <td>Rp<?= number_format($row['jumlah_bayar'], 0, ',', '.'); ?></td>
                         <td><?= $row['status']; ?></td>
@@ -141,7 +184,18 @@ include "../db.php";
     </div>
 </div>
 
-<!-- Script JS Harga Otomatis -->
+    <h2>Manajemen File Uploads</h2>
+
+    <form method="post">
+        <button type="submit" name="download_zip">Download Semua Gambar (.zip)</button>
+    </form>
+
+    <br>
+
+    <form method="post" onsubmit="return confirm('Yakin ingin menghapus semua gambar di folder uploads?');">
+        <button type="submit" name="delete_files">Hapus Semua Gambar</button>
+    </form>
+
 <script>
     const hargaData = <?php
         $hargaQuery = mysqli_query($db, "SELECT program, level, harga FROM harga");

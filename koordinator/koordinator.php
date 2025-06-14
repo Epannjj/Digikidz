@@ -42,6 +42,9 @@
     <section id="harga">
         <?php include "harga.php"; ?>
     </section>
+    <section id="hasilkarya">
+        <?php include "hasilkarya.php"; ?>
+    </section>
 </body>
 
 </html>
