@@ -29,15 +29,91 @@
     // HAPUS siswa
     if (isset($_POST['hapus'])) {
         $id_siswa = $_POST['id_siswa'];
+
+        // Cek apakah siswa memiliki data di tabel ambilprogram
+        $cek = mysqli_query($db, "SELECT COUNT(*) AS jumlah FROM ambilprogram WHERE id_siswa='$id_siswa'");
+        $data = mysqli_fetch_assoc($cek);
+
+        if ($data['jumlah'] > 0) {
+            // Jika ada program, gunakan transaksi untuk hapus kedua tabel
+            mysqli_begin_transaction($db);
+
+            try {
+                // Hapus dari ambilprogram
+                $delete2 = mysqli_query($db, "DELETE FROM ambilprogram WHERE id_siswa='$id_siswa'");
+                if (!$delete2) {
+                    throw new Exception("Gagal menghapus dari tabel ambilprogram: " . mysqli_error($db));
+                }
+
+                // Hapus dari siswa
+                $delete = mysqli_query($db, "DELETE FROM siswa WHERE id_siswa='$id_siswa'");
+                if (!$delete) {
+                    throw new Exception("Gagal menghapus dari tabel siswa: " . mysqli_error($db));
+                }
+
+                mysqli_commit($db);
+                showNotification("Data siswa dan program berhasil dihapus", "success");
+
+            } catch (Exception $e) {
+                mysqli_rollback($db);
+                showNotification("Gagal menghapus data siswa: " . $e->getMessage(), "error");
+            }
+
+        } else {
+            // Jika tidak ada program, hapus hanya dari siswa
+            $delete = mysqli_query($db, "DELETE FROM siswa WHERE id_siswa='$id_siswa'");
+            if ($delete) {
+                showNotification("Data siswa berhasil dihapus (tidak terdaftar di program)", "success");
+            } else {
+                showNotification("Gagal menghapus data siswa: " . mysqli_error($db), "error");
+            }
+        }
+    }
+    // Edit ambilprogram
+    if (isset($_POST['edit_program'])) {
+        $id_ambil = $_POST['id_ambil'];
+        $program = mysqli_real_escape_string($db, $_POST['program']);
+        $tanggal = date("Y-m-d");
+
+        // Cek apakah program sudah ada untuk siswa ini
+        $cek_program = mysqli_query($db, "SELECT * FROM ambilprogram WHERE id_ambil != '$id_ambil' AND program = '$program'");
+        if (mysqli_num_rows($cek_program) > 0) {
+            showNotification("Program sudah terdaftar untuk siswa ini!", "error");
+        } else {
+            // Update ambilprogram
+            $update_program = mysqli_query($db, "UPDATE ambilprogram SET program='$program', tanggal='$tanggal' WHERE id_ambil='$id_ambil'");
+            if ($update_program) {
+                showNotification("Program berhasil diubah", "success");
+            } else {
+                showNotification("Gagal mengubah program: " . mysqli_error($db), "error");
+            }
+        }
+    }
+    //edit ambilprogram
+    if (isset($_POST['editp'])) {
+        $id_ambil = $_POST['id_ambil'];
+        $nama = $_POST['nama'];
         $program = $_POST['program'];
-        $delete = mysqli_query($db, "DELETE FROM ambilprogram WHERE id_siswa='$id_siswa' AND program='$program'");
+        $tagihan = $_POST['tagihan'];
+
+        // Update ambilprogram
+        $update_program = mysqli_query($db, "UPDATE ambilprogram SET program='$program', tagihan='$tagihan' WHERE id_ambil='$id_ambil' AND nama='$nama'");
+        if ($update_program) {
+            showNotification("Program siswa berhasil diubah", "success");
+        } else {
+            showNotification("Gagal mengubah program siswa: " . mysqli_error($db), "error");
+        }
+    }
+    // HAPUS ambilprogram 
+    if (isset($_POST['hapusp'])) {
+        $id_ambil = $_POST['id_ambil'];
+        $delete = mysqli_query($db, "DELETE FROM ambilprogram WHERE id_ambil='$id_ambil'");
         if ($delete) {
             showNotification("Data siswa berhasil dihapus", "success");
         } else {
             showNotification("Gagal menghapus data siswa: " . mysqli_error($db), "error");
         }
     }
-
     // SIMPAN dengan program alternatif (untuk nama duplikat)
     if (isset($_POST['simpan_alternatif'])) {
         $nama = mysqli_real_escape_string($db, $_POST['nama_alternatif']);
@@ -92,31 +168,38 @@
     </div>
     <div class="conten">
         <div class="section">
-
-            <div class="formpresensi">
+            <?php
+            include "popup.php";
+            ?>
+            <div class="form">
                 <form action="#siswa" method="post">
                     <label for="nama">Nama Siswa:</label><br>
                     <input type="text" id="nama" name="nama" required><br>
 
                     <label for="program">Program</label><br>
-                    <select name="program" id="program">
-                        <?php
-                        $sql = mysqli_query($db, "SELECT * FROM program");
-                        while ($row = mysqli_fetch_array($sql)) {
-                            echo "<option value='" . $row['PROGRAM'] . "'>" . $row['PROGRAM'] . "</option>";
-                        }
-                        ?>
-                    </select><br>
-                    <label for="tanggal">Tanggal daftar</label>
-                    <input type="date" id="tanggal" name="tanggal" required>
+                    <div class="sort" style="display:flex;flex-direction: column;">
+                        <label for="sort_kategori">Pilih Program</label>
 
+                        <!-- Custom Searchable Select -->
+                        <div class="custom-select">
+                            <input type="text" class="select-input" id="searchableSelectSiswa"
+                                placeholder="-- Pilih Program --" readonly
+                                value="<?php echo isset($_GET['selected_text']) ? htmlspecialchars($_GET['selected_text']) : '-- Semua Program --'; ?>">
+                            <input type="hidden" name="sort_program" id="hiddenInputSiswa"
+                                value="<?php echo isset($_GET['sort_program']) ? htmlspecialchars($_GET['sort_program']) : ''; ?>">
+                            <input type="hidden" name="selected_text" id="selectedTextSiswa"
+                                value="<?php echo isset($_GET['selected_text']) ? htmlspecialchars($_GET['selected_text']) : ' '; ?>">
+
+                            <div class="select-dropdown" id="selectDropdownSiswa"></div>
+                        </div>
+                    </div>
                     <input type="submit" value="Simpan" class="submit-btn" name="simpan">
                 </form>
 
                 <?php
                 if (isset($_POST['simpan'])) {
                     $nama = mysqli_real_escape_string($db, $_POST['nama']);
-                    $program = mysqli_real_escape_string($db, $_POST['program']);
+                    $program = mysqli_real_escape_string($db, $_POST['selected_text']);
                     $tanggal = date("Y-m-d");
 
                     // Cek nama duplikat dan program yang sudah diambil
@@ -169,6 +252,7 @@
                         if ($sql) {
                             // Ambil tagihan dari tabel program
                             $idambil = 'p' . $id;
+                            $program = mysqli_real_escape_string($db, $_POST['sort_program']);
                             $sqltagihan = mysqli_query($db, "SELECT harga, `MONTH OF CERTIFICATED` FROM program WHERE program = '$program'");
                             $ctagihan = mysqli_fetch_array($sqltagihan);
                             if ($ctagihan) {
@@ -190,110 +274,395 @@
                 }
                 ?>
             </div>
+            <div style="text-align: center; margin-bottom: 30px;">
+                <button class="menu-btn active" onclick="showDataSiswa()">Data Siswa</button>
+                <button class="menu-btn" onclick="showDataSiswaprogram()">Data Program Siswa</button>
+                <?php
+                // Query untuk mendapatkan data progress
+                $data_progress = mysqli_query($db, "
+    SELECT 
+        siswa.nama, 
+        ambilprogram.program, 
+        COUNT(DISTINCT hasil_presensi.pertemuan) AS pertemuan_hadir,
+        (
+            SELECT `JUMLAH PERTEMUAN (WEEK)`
+            FROM program 
+            WHERE program.program = ambilprogram.program
+        ) AS total_pertemuan
+    FROM siswa
+    JOIN ambilprogram ON siswa.id_siswa = ambilprogram.id_siswa
+    LEFT JOIN hasil_presensi ON siswa.nama = hasil_presensi.nama AND ambilprogram.program = hasil_presensi.program
+    GROUP BY siswa.id_siswa, ambilprogram.program;
+");
 
-            <div>
+                // Simpan data dalam array dan hitung badge sekaligus
+                $progress_data = [];
+                $progress_report_count = 0;
+                $sertifikat_count = 0;
+
+                while ($row = mysqli_fetch_array($data_progress)) {
+                    $total_pertemuan = $row['total_pertemuan'] > 0 ? $row['total_pertemuan'] : 1;
+                    $progress_percentage = ($row['pertemuan_hadir'] / $total_pertemuan) * 100;
+
+                    // Simpan data untuk digunakan nanti
+                    $progress_data[] = [
+                        'nama' => $row['nama'],
+                        'program' => $row['program'],
+                        'pertemuan_hadir' => $row['pertemuan_hadir'],
+                        'total_pertemuan' => $total_pertemuan,
+                        'progress_percentage' => round($progress_percentage, 2)
+                    ];
+
+                    // Hitung untuk badge
+                    if (round($progress_percentage, 2) == 50) {
+                        $progress_report_count++;
+                    } else if (round($progress_percentage, 2) == 100) {
+                        $sertifikat_count++;
+                    }
+                }
+                ?>
+
+                <!-- Button dengan badge -->
+                <button class="menu-btn" onclick="showProgressSiswa()">
+                    Progress Siswa
+                    <?php if ($progress_report_count > 0): ?>
+                        <span class="notification-badge badge-blue"><?= $progress_report_count ?></span>
+                    <?php endif; ?>
+                    <?php if ($sertifikat_count > 0): ?>
+                        <span class="notification-badge badge-red"><?= $sertifikat_count ?></span>
+                    <?php endif; ?>
+                </button>
+            </div>
+            <!-- Tabel Data Siswa -->
+            <div id="tabelDataSiswa" class="table-container fade-in">
                 <h3>Data Siswa</h3>
-                <table border="1">
+                <form method="GET" action="#tabel">
+                    <input type="text" name="search" placeholder="Cari nama siswa..."
+                        value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                    <button type="submit" class="submit-btn">Cari</button>
+                </form>
+                <?php
+                $search = isset($_GET['search']) ? mysqli_real_escape_string($db, $_GET['search']) : '';
+
+                $query = "
+    SELECT siswa.*, 
+           (SELECT COUNT(*) FROM ambilprogram WHERE ambilprogram.id_siswa = siswa.id_siswa) AS jumlah_program 
+    FROM siswa
+";
+
+                if (!empty($search)) {
+                    $query .= " WHERE siswa.nama LIKE '%$search%'";
+                }
+
+                $query .= " ORDER BY siswa.nama";
+
+                $data = mysqli_query($db, $query);
+                ?>
+                <div class="table"
+                    style="width: 100%; max-height: 60vh; overflow-y: auto; margin-top: 10px; padding: 5px; box-shadow: steelblue 2px 2px 2px;">
+                    <table border="1" id="tabel">
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Siswa</th>
+                            <th>Password</th>
+                            <th>jumlah Program</th>
+                            <th>Aksi</th>
+                        </tr>
+                        <?php
+                        $no = 1;
+                        while ($row = mysqli_fetch_array($data)) { ?>
+                            <tr>
+                                <td><?php echo $no; ?></td>
+                                <td><?php echo $row['nama']; ?></td>
+                                <td><?php echo $row['password']; ?></td>
+                                <td><?php echo $row['jumlah_program']; ?></td>
+                                <td>
+                                    <button class="btn-edit"
+                                        onclick="showEditForm('<?php echo $row['id_siswa']; ?>', '<?php echo $row['nama']; ?>','<?php echo $row['password']; ?>')">Edit</button>
+                                    <button class="btn-hapus"
+                                        onclick="showDeleteConfirm('<?php echo $row['id_siswa']; ?>', '<?php echo $row['nama']; ?>')">Hapus</button>
+                                </td>
+                            </tr>
+                            <?php $no++;
+                        } ?>
+                    </table>
+                </div>
+            </div>
+            <!-- Tabel Data Program Siswa -->
+            <div id="tabelProgramSiswa" class="table-container fade-in hidden">
+                <h3>Data Program Siswa</h3>
+                <!-- Program Dropdown -->
+                <div class="sort" style="display:flex;flex-direction: column;">
+                    <form method="get" action="#tabel">
+                        <label for="sort_kategori">Pilih Program</label>
+
+                        <!-- Custom Searchable Select -->
+                        <div class="custom-select">
+                            <input type="text" class="select-input" id="searchableSelect"
+                                placeholder="-- Pilih Program --" readonly
+                                value="<?php echo isset($_GET['selected_text']) ? htmlspecialchars($_GET['selected_text']) : '-- Semua Program --'; ?>">
+                            <input type="hidden" name="sort_program" id="hiddenInput"
+                                value="<?php echo isset($_GET['sort_program']) ? htmlspecialchars($_GET['sort_program']) : ''; ?>">
+                            <input type="hidden" name="selected_text" id="selectedText"
+                                value="<?php echo isset($_GET['selected_text']) ? htmlspecialchars($_GET['selected_text']) : '-- Semua Program --'; ?>">
+
+                            <div class="select-dropdown" id="selectDropdown"></div>
+                        </div>
+                        <input type="submit" class="submit-btn" value="Filter">
+                    </form>
+                </div>
+                <?php
+                $sort_program = $_GET['sort_program'] ?? '';
+
+                $query = "SELECT siswa.nama, ambilprogram.*, siswa.id_siswa FROM siswa JOIN ambilprogram ON siswa.id_siswa = ambilprogram.id_siswa WHERE 1=1 ";
+                if ($sort_program !== '') {
+                    $query .= " AND ambilprogram.program = '" . mysqli_real_escape_string($db, $sort_program) . "'";
+                }
+
+                $query .= " ORDER BY siswa.nama ASC";
+                $sql = mysqli_query($db, $query);
+                ?>
+                <div class="table"
+                    style="width: 100%; max-height: 60vh; overflow-y: auto; margin-top: 10px; padding: 5px; box-shadow: steelblue 2px 2px 2px;">
+                    <table>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Siswa</th>
+                            <th>Program</th>
+                            <th>Tanggal Daftar</th>
+                            <th>Tagihan PerBulan</th>
+                            <th>Aksi</th>
+                        </tr>
+                        <?php
+                        $no_program = 1;
+                        while ($row_program = mysqli_fetch_array($sql)) { ?>
+                            <tr>
+                                <td><?php echo $no_program; ?></td>
+                                <td><?php echo $row_program['nama']; ?></td>
+                                <td><?php echo $row_program['program']; ?></td>
+                                <?php if ($row_program["tanggal"] == null) {
+                                    $tgll = "-";
+                                } else {
+                                    $tgll = $row_program["tanggal"];
+                                } ?>
+                                <td><?php echo $tgll; ?></td>
+                                <td><?php echo $row_program['tagihan']; ?></td>
+                                <td>
+                                    <button class=" btn-edit"
+                                        onclick="showEditFormp('<?php echo $row_program['id_ambil']; ?>','<?php echo $row_program['nama']; ?>','<?php echo $row_program['program']; ?>','<?php echo $row_program['tagihan']; ?>')">Edit</button>
+                                    <button class="btn-hapus"
+                                        onclick="showDeleteConfirmp('<?php echo $row_program['id_ambil']; ?>','<?php echo $row_program['nama']; ?>','<?php echo $row_program['program']; ?>')">Hapus</button>
+                                </td>
+                            </tr>
+                            <?php $no_program++;
+                        } ?>
+                    </table>
+                </div>
+            </div>
+            <div id="tabelProgressSiswa" class="table-container fade-in hidden"
+                style="width: 100%; max-height: 60vh; overflow-y: auto; margin-top: 10px; padding: 5px; box-shadow: steelblue 2px 2px 2px;">
+                <h3>Progress Siswa</h3>
+                <table>
                     <tr>
                         <th>No</th>
                         <th>Nama Siswa</th>
-                        <th>Password</th>
                         <th>Program</th>
-                        <th>Tanggal daftar</th>
-                        <th>Aksi</th>
-                        <th>QR Code</th>
+                        <th>Progress</th>
                     </tr>
-                    <?php
-                    $data = mysqli_query($db, "SELECT siswa.*, ambilprogram.program, ambilprogram.tanggal FROM `siswa` JOIN `ambilprogram` ON siswa.id_siswa = ambilprogram.id_siswa ORDER BY siswa.nama;");
-                    $no = 1;
-                    while ($row = mysqli_fetch_array($data)) { ?>
-                        <tr>
-                            <td><?php echo $no; ?></td>
-                            <td><?php echo $row['nama']; ?></td>
-                            <td><?php echo $row['password']; ?></td>
-                            <td><?php echo $row['program']; ?></td>
-                            <td><?php echo $row['tanggal']; ?></td>
-                            <td>
-                                <button class="btn-edit"
-                                    onclick="showEditForm('<?php echo $row['id_siswa']; ?>', '<?php echo $row['nama']; ?>','<?php echo $row['password']; ?>')">Edit</button>
-                                <button class="btn-hapus"
-                                    onclick="showDeleteConfirm('<?php echo $row['id_siswa']; ?>', '<?php echo $row['nama']; ?>')">Hapus</button>
-                            </td>
-                            <td>
-                                <form action="../qrcode/generate_qr.php" method="post" target="_blank">
-                                    <input type="hidden" name="nama" value="<?php echo $row['nama']; ?>">
-                                    <input type="hidden" name="password" value="<?php echo $row['password']; ?>">
-                                    <input type="submit" value="Generate QR">
-                                </form>
-                            </td>
-                        </tr>
-                        <?php $no++;
-                    } ?>
+                    <tr>
+                        <?php
+                        $data_progress = mysqli_query($db, "
+        SELECT 
+            siswa.nama, 
+            ambilprogram.program, 
+            COUNT(DISTINCT hasil_presensi.pertemuan) AS pertemuan_hadir,
+            (
+                SELECT `JUMLAH PERTEMUAN (WEEK)`
+                FROM program 
+                WHERE program.program = ambilprogram.program
+            ) AS total_pertemuan
+        FROM siswa
+        JOIN ambilprogram ON siswa.id_siswa = ambilprogram.id_siswa
+        LEFT JOIN hasil_presensi ON siswa.nama = hasil_presensi.nama AND ambilprogram.program = hasil_presensi.program
+        GROUP BY siswa.id_siswa, ambilprogram.program;
+    ");
+
+                        $no_progress = 1;
+                        while ($row_progress = mysqli_fetch_array($data_progress)) {
+                            $total_pertemuan = $row_progress['total_pertemuan'] > 0 ? $row_progress['total_pertemuan'] : 1;
+                            $progress_percentage = ($row_progress['pertemuan_hadir'] / $total_pertemuan) * 100;
+                            if (round($progress_percentage, 2) == 50) {
+                                echo "<tr>
+            <td>{$no_progress}</td>
+            <td>{$row_progress['nama']}</td>
+            <td>{$row_progress['program']}</td>
+            <td>
+                <button class='btn-blue' onclick=\"showProgressrptForm('{$row_progress['nama']}', '{$row_progress['program']}')\">
+                    Upload Progress Report
+                </button>
+            </td>
+        </tr>";
+                            } else if (round($progress_percentage, 2) == 100) {
+                                echo "<tr>
+            <td>{$no_progress}</td>
+            <td>{$row_progress['nama']}</td>
+            <td>{$row_progress['program']}</td>
+            <td>
+                <button class='btn-blue' onclick=\"showSertifikatForm('{$row_progress['nama']}', '{$row_progress['program']}')\">
+                    Upload Sertifikat
+                </button>
+            </td>
+        </tr>";
+                            } else {
+                                echo "<tr>
+            <td>{$no_progress}</td>
+            <td>{$row_progress['nama']}</td>
+            <td>{$row_progress['program']}</td>
+            <td>
+                <div class='progress-bar' style='width:100%; background:#eee; border-radius:6px; height:22px; position:relative;'>
+                    <div class='progress-fill' style='width:" . round($progress_percentage, 2) . "%; background:#4caf50; height:100%; border-radiu  s:6px;'></div>
+                    <div class='progress-text' style='position:absolute; left:0; right:0; top:0; bottom:0; display:flex; align-items:center; justify-content:center; font-weight:bold;'>
+                        " . round($progress_percentage, 2) . "%
+                    </div>
+                </div>
+            </td>
+        </tr>";
+                            }
+                            $no_progress++;
+                        }
+                        ?>
+                    </tr>
                 </table>
             </div>
+            <?php
+            // UPLOAD PROGRESS REPORT
+            if (isset($_POST['upload_progress_report'])) {
+                $nama = mysqli_real_escape_string($db, $_POST['progressrpt_nama']);
+                $program = mysqli_real_escape_string($db, $_POST['progressrpt_program']);
+                $link_progress = mysqli_real_escape_string($db, $_POST['link_progress']);
 
-            <!-- Popup untuk Edit Siswa -->
-            <div id="editOverlay" class="overlay">
+                // Update atau insert progress report
+                $check_existing = mysqli_query($db, "SELECT * FROM progress_report WHERE nama='$nama' AND program='$program'");
+
+                if (mysqli_num_rows($check_existing) > 0) {
+                    // Update existing record
+                    $update_progress = mysqli_query($db, "UPDATE progress_report SET link_progress='$link_progress', tanggal_upload=NOW() WHERE nama='$nama' AND program='$program'");
+                    if ($update_progress) {
+                        showNotification("Progress Report berhasil diupdate untuk $nama", "success");
+                    } else {
+                        showNotification("Gagal mengupdate Progress Report: " . mysqli_error($db), "error");
+                    }
+                } else {
+                    // Insert new record
+                    $insert_progress = mysqli_query($db, "INSERT INTO progress_report (nama, program, link_progress, tanggal_upload) VALUES ('$nama', '$program', '$link_progress', NOW())");
+                    if ($insert_progress) {
+                        showNotification("Progress Report berhasil diupload untuk $nama", "success");
+                    } else {
+                        showNotification("Gagal mengupload Progress Report: " . mysqli_error($db), "error");
+                    }
+                }
+            }
+
+            // UPLOAD SERTIFIKAT
+            if (isset($_POST['upload_sertifikat'])) {
+                $nama = mysqli_real_escape_string($db, $_POST['sertifikat_nama']);
+                $program = mysqli_real_escape_string($db, $_POST['sertifikat_program']);
+                $link_sertifikat = mysqli_real_escape_string($db, $_POST['link_sertifikat']);
+
+                // Update atau insert sertifikat
+                $check_existing = mysqli_query($db, "SELECT * FROM sertifikat WHERE nama='$nama' AND program='$program'");
+
+                if (mysqli_num_rows($check_existing) > 0) {
+                    // Update existing record
+                    $update_sertifikat = mysqli_query($db, "UPDATE sertifikat SET link_sertifikat='$link_sertifikat', tanggal_upload=NOW() WHERE nama='$nama' AND program='$program'");
+                    if ($update_sertifikat) {
+                        showNotification("Sertifikat berhasil diupdate untuk $nama", "success");
+                    } else {
+                        showNotification("Gagal mengupdate Sertifikat: " . mysqli_error($db), "error");
+                    }
+                } else {
+                    // Insert new record
+                    $insert_sertifikat = mysqli_query($db, "INSERT INTO sertifikat (nama, program, link_sertifikat, tanggal_upload) VALUES ('$nama', '$program', '$link_sertifikat', NOW())");
+                    if ($insert_sertifikat) {
+                        showNotification("Sertifikat berhasil diupload untuk $nama", "success");
+                    } else {
+                        showNotification("Gagal mengupload Sertifikat: " . mysqli_error($db), "error");
+                    }
+                }
+            }
+            ?>
+
+            <!-- Popup untuk Upload Progress Report -->
+            <div id="progressrptOverlay" class="overlay">
                 <div class="popup">
-                    <h2>Edit Siswa</h2>
-                    <form id="editForm" action="" method="POST">
-                        <input type="hidden" id="edit_id_siswa" name="id_siswa">
+                    <h2>Upload Progress Report</h2>
+                    <form action="" method="POST">
+                        <input type="hidden" id="progressrpt_nama" name="progressrpt_nama">
+                        <input type="hidden" id="progressrpt_program" name="progressrpt_program">
+
                         <div class="form-group">
-                            <label for="edit_nama">Nama Siswa:</label>
-                            <input type="text" id="edit_nama" name="nama" required>
+                            <label for="siswa_info_progress">Siswa:</label>
+                            <p id="siswa_info_progress" class="info-text"></p>
                         </div>
+
                         <div class="form-group">
-                            <label for="edit_password">password:</label>
-                            <input type="text" id="edit_password" name="password" required>
+                            <label for="program_info_progress">Program:</label>
+                            <p id="program_info_progress" class="info-text"></p>
                         </div>
+
+                        <div class="form-group">
+                            <label for="link_progress">Link Drive Progress Report:</label>
+                            <input type="url" id="link_progress" name="link_progress"
+                                placeholder="https://drive.google.com/..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <small class="help-text">
+                                Pastikan file sudah di-share dengan akses "Anyone with the link can view"
+                            </small>
+                        </div>
+
                         <div class="popup-buttons">
-                            <button type="button" class="btn-cancel" onclick="hideEditForm()">Batal</button>
-                            <button type="submit" name="edit" class="btn-confirm">Simpan</button>
+                            <button type="button" class="btn-cancel" onclick="hideProgressrptForm()">Batal</button>
+                            <button type="submit" name="upload_progress_report" class="btn-confirm">Upload</button>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- Popup untuk Konfirmasi Hapus -->
-            <div id="deleteOverlay" class="overlay">
+            <!-- Popup untuk Upload Sertifikat -->
+            <div id="sertifikatOverlay" class="overlay">
                 <div class="popup">
-                    <h2>Konfirmasi Hapus</h2>
-                    <p id="deleteMessage">Apakah Anda yakin ingin menghapus siswa ini?</p>
-                    <form id="deleteForm" action="" method="POST">
-                        <input type="hidden" id="delete_id_siswa" name="id_siswa">
-                        <input type="hidden" id="delete_program" name="program">
-                        <div class="popup-buttons">
-                            <button type="button" class="btn-cancel" onclick="hideDeleteConfirm()">Batal</button>
-                            <button type="submit" name="hapus" class="btn-delete-confirm">Hapus</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+                    <h2>Upload Sertifikat</h2>
+                    <form action="" method="POST">
+                        <input type="hidden" id="sertifikat_nama" name="sertifikat_nama">
+                        <input type="hidden" id="sertifikat_program" name="sertifikat_program">
 
-            <!-- Popup untuk Nama Duplikat - Pilih Program Lain -->
-            <div id="duplicateOverlay" class="overlay">
-                <div class="popup">
-                    <h2>Nama Sudah Ada</h2>
-                    <p id="duplicateMessage">Nama siswa sudah terdaftar. Pilih program tambahan untuk siswa ini:</p>
-                    <form id="duplicateForm" action="" method="POST">
-                        <input type="hidden" id="duplicate_nama" name="nama_alternatif">
                         <div class="form-group">
-                            <label for="duplicate_program">Pilih Program Lain:</label>
-                            <select name="program_alternatif" id="duplicate_program" required>
-                                <option value="">-- Pilih Program --</option>
-                                <?php
-                                $sql_program = mysqli_query($db, "SELECT * FROM program ORDER BY PROGRAM");
-                                while ($row_program = mysqli_fetch_array($sql_program)) {
-                                    echo "<option value='" . $row_program['PROGRAM'] . "'>" . $row_program['PROGRAM'] . "</option>";
-                                }
-                                ?>
-                            </select>
-                    <label for="tanggal">Tanggal daftar</label>
-                    <input type="date" id="tanggal" name="tanggal" required>
+                            <label for="siswa_info_sertifikat">Siswa:</label>
+                            <p id="siswa_info_sertifikat" class="info-text"></p>
                         </div>
+
+                        <div class="form-group">
+                            <label for="program_info_sertifikat">Program:</label>
+                            <p id="program_info_sertifikat" class="info-text"></p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="link_sertifikat">Link Drive Sertifikat:</label>
+                            <input type="url" id="link_sertifikat" name="link_sertifikat"
+                                placeholder="https://drive.google.com/..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <small class="help-text">
+                                Pastikan file sudah di-share dengan akses "Anyone with the link can view"
+                            </small>
+                        </div>
+
                         <div class="popup-buttons">
-                            <button type="button" class="btn-cancel" onclick="hideDuplicateForm()">Batal</button>
-                            <button type="submit" name="simpan_alternatif" class="btn-confirm">Tambah Program</button>
+                            <button type="button" class="btn-cancel" onclick="hideSertifikatForm()">Batal</button>
+                            <button type="submit" name="upload_sertifikat" class="btn-confirm">Upload</button>
                         </div>
                     </form>
                 </div>
@@ -316,16 +685,42 @@
     }
 
     // Delete Confirmation Functions
-    function showDeleteConfirm(id_siswa, program, nama) {
+    function showDeleteConfirm(id_siswa, nama) {
         document.getElementById('delete_id_siswa').value = id_siswa;
-        document.getElementById('delete_program').value = program;
+        document.getElementById('delete_nama').value = nama;
         document.getElementById('deleteMessage').textContent =
-            'Apakah Anda yakin ingin menghapus siswa "' + program + '" " (' + id_siswa + ')?';
+            'Apakah Anda yakin ingin menghapus siswa "' + nama + ' ?"';
         document.getElementById('deleteOverlay').style.display = 'flex';
     }
 
     function hideDeleteConfirm() {
         document.getElementById('deleteOverlay').style.display = 'none';
+    }
+    // Edit Program
+    function showEditFormp(id_ambil, nama, program, tagihan) {
+        document.getElementById('edit_id_ambil').value = id_ambil;
+        document.getElementById('edit_namap').value = nama;
+        document.getElementById('edit_program').value = program;
+        document.getElementById('edit_tagihan').value = tagihan;
+        document.getElementById('editOverlayp').style.display = 'flex';
+    }
+
+    function hideEditFormp() {
+        document.getElementById('editOverlayp').style.display = 'none';
+    }
+
+    // Delete Confirmation Functions
+    function showDeleteConfirmp(id_ambil, nama, program) {
+        document.getElementById('delete_id_ambil').value = id_ambil;
+        document.getElementById('delete_namap').value = nama;
+        document.getElementById('delete_program').value = program;
+        document.getElementById('deleteMessagep').textContent =
+            'Apakah Anda yakin ingin menghapus siswa "' + nama + ' Dengan Program : ' + program + ' ?"';
+        document.getElementById('deleteOverlayp').style.display = 'flex';
+    }
+
+    function hideDeleteConfirmp() {
+        document.getElementById('deleteOverlayp').style.display = 'none';
     }
 
     // Duplicate Name Functions
@@ -369,4 +764,67 @@
             hideDuplicateForm();
         }
     }
+    function showDataSiswa() {
+        document.getElementById('tabelProgressSiswa').classList.add('hidden');
+        document.getElementById('tabelProgramSiswa').classList.add('hidden');
+        document.getElementById('tabelDataSiswa').classList.remove('hidden');
+        document.getElementById('tabelDataSiswa').classList.add('fade-in');
+
+        updateButtonStatus('data');
+    }
+
+    function showDataSiswaprogram() {
+        document.getElementById('tabelProgressSiswa').classList.add('hidden');
+        document.getElementById('tabelDataSiswa').classList.add('hidden');
+        document.getElementById('tabelProgramSiswa').classList.remove('hidden');
+        document.getElementById('tabelProgramSiswa').classList.add('fade-in');
+
+        updateButtonStatus('program');
+    }
+
+    function showProgressSiswa() {
+        document.getElementById('tabelDataSiswa').classList.add('hidden');
+        document.getElementById('tabelProgramSiswa').classList.add('hidden');
+        document.getElementById('tabelProgressSiswa').classList.remove('hidden');
+        document.getElementById('tabelProgressSiswa').classList.add('fade-in');
+
+        updateButtonStatus('progress');
+    }
+
+    function updateButtonStatus(activeTab) {
+        const buttons = document.querySelectorAll('.menu-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+
+        if (activeTab === 'data') {
+            buttons[0].classList.add('active');
+        } else if (activeTab === 'program') {
+            buttons[1].classList.add('active');
+        } else if (activeTab === 'progress') {
+            buttons[2].classList.add('active');
+        }
+    }
+
+    // Initialize with Data Siswa view
+    document.addEventListener('DOMContentLoaded', function () {
+        showDataSiswa();
+    });
+    function showSertifikatForm(nama, program) {
+        document.getElementById("sertifikat_nama").value = nama;
+        document.getElementById("sertifikat_program").value = program;
+        document.getElementById("sertifikatOverlay").style.display = "flex";
+    }
+
+    function hideSertifikatForm() {
+        document.getElementById("sertifikatOverlay").style.display = "none";
+    }
+    function showProgressrptForm(nama, program) {
+        document.getElementById("progressrpt_nama").value = nama;
+        document.getElementById("progressrpt_program").value = program;
+        document.getElementById("progressrptOverlay").style.display = "flex";
+    }
+
+    function hideprogressrptForm() {
+        document.getElementById("progressrptOverlay").style.display = "none";
+    }
+    <?php include '../select.php'; ?>
 </script>

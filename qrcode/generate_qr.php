@@ -1,12 +1,12 @@
 <?php
 include "../library/phpqrcode/qrlib.php";
 
-if (isset($_POST['nama'])) {
-    $nama = $_POST['nama'];
+if (isset($_POST['id_siswa'])) {
+    $id = $_POST['id_siswa'];
     $program = $_POST['program'];
-    $password = $_POST['password'];
+    $nama = $_POST['nama'];
 
-    $qrContent = $nama;
+    $qrContent = $id;
 
     // Define paths for temporary QR code, final name card image, background image, and logo image
     $tempDir = "temp/";
@@ -74,7 +74,7 @@ if (isset($_POST['nama'])) {
     // Add text to the name card
     $fontPath = __DIR__ . '/arial.ttf'; // Path to a .ttf font file
     imagettftext($image, 18, 0, 130, 230, $black, $fontPath, $nama);
-    imagettftext($image, 18, 0, 130, 260, $black, $fontPath, $password);
+    imagettftext($image, 18, 0, 130, 260, $black, $fontPath, $program);
 
     // Save the final name card image
     imagepng($image, $cardFileName);

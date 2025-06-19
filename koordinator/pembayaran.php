@@ -1,11 +1,12 @@
 <style>
-    <?php include "../styles.css"; ?>
+    <?php session_start();
+
+    include "../styles.css"; ?>
 </style>
 
 <div class="sidebar-placeholder">
 
     <?php
-    session_start();
     include "sidebar2.php";
     include "../db.php" 
     ?>
@@ -22,7 +23,7 @@
                 <select name="nama_siswa" id="nama_siswa" required>
                     <option value="">-- Pilih Siswa --</option>
                     <?php
-                     $result = mysqli_query($db, "SELECT siswa.id_siswa, siswa.nama, 
+                    $result = mysqli_query($db, "SELECT siswa.id_siswa, siswa.nama, 
                                     GROUP_CONCAT(ambilprogram.program) AS program_list,
                                     SUM(ambilprogram.tagihan) AS total_tagihan, ambilprogram.tanggal AS tanggal_display,
                                     program.`MONTH OF CERTIFICATED`as bulan,
@@ -71,16 +72,16 @@
                     <label>Tanggal Pembayaran:</label><br>
                     <input type="date" name="tanggal" required><br>
 
-                    <label>Jumlah Bayar (Rp):</label><br>
-                    <input type="number" name="jumlah_bayar" id="jumlah_bayar"><br>
+                <label>Jumlah Bayar (Rp):</label><br>
+                <input type="number" name="jumlah_bayar" id="jumlah_bayar"><br>
 
-                    <div id="info_tagihan" style="margin: 10px 0; font-weight: bold;"></div>
+                <div id="info_tagihan" style="margin: 10px 0; font-weight: bold;"></div>
 
-                    <label>Upload Bukti Pembayaran:</label><br>
-                    <input type="file" name="bukti" required><br><br>
+                <label>Upload Bukti Pembayaran:</label><br>
+                <input type="file" name="bukti" required><br><br>
 
-                    <input type="submit" value="Submit" name="submit_pembayaran">
-                </form>
+                <input type="submit" value="Submit" name="submit_pembayaran">
+            </form>
 
             <?php
             if (isset($_FILES['bukti']) && $_FILES['bukti']['error'] === 0) {
@@ -111,23 +112,23 @@
             $q1 = mysqli_query($db, "SELECT count(id_pembayaran) FROM pembayaran");
             $cekid = mysqli_fetch_array($q1);
             $id = ($cekid[0] == 0) ? 1 : $cekid[0] + 1;
+                $id_siswa = $_POST['nama_siswa'];
+                $nama_siswa = $_POST['nama_siswa_text'];
+                $program = $_POST['program'];
+                $tanggal = $_POST['tanggal'];
+                $jumlah_bayar = (int) $_POST['jumlah_bayar'];
+                $sisa_bayar = $jumlah_bayar;
+                $status = 'Lunas';
+                $sql = false;
 
-            $id_siswa = $_POST['nama_siswa'];
-            $nama_siswa = $_POST['nama_siswa_text'];
-            $program = $_POST['program'];
-            $tanggal = $_POST['tanggal'];
-            $jumlah_bayar = (int) $_POST['jumlah_bayar'];
-            $sisa_bayar = $jumlah_bayar;
-            $status = 'Lunas';
-            $sql = false;
-
-            // Ambil semua program dengan tagihan > 0
-            $ambilPrograms = mysqli_query($db, "SELECT id_ambil, program, tagihan 
+                // Ambil semua program dengan tagihan > 0
+                $ambilPrograms = mysqli_query($db, "SELECT id_ambil, program, tagihan 
                 FROM ambilprogram 
                 WHERE id_siswa = '$id_siswa' AND tagihan > 0 
                 ORDER BY program ASC
             ");
 
+<<<<<<< Updated upstream
             if (mysqli_num_rows($ambilPrograms) === 0) {
                 echo "Maaf, siswa ini tidak memiliki tagihan.";
             }
@@ -231,84 +232,193 @@
         }
     }
     ?>
+                if (mysqli_num_rows($ambilPrograms) === 0) {
+                    echo "Maaf, siswa ini tidak memiliki tagihan.";
+                }
+
+                while ($row = mysqli_fetch_assoc($ambilPrograms)) {
+                    $id_ambil = $row['id_ambil'];
+                    $program = $row['program'];
+                    $tagihan = (int) $row['tagihan'];
+
+                    if ($sisa_bayar <= 0)
+                        break;
+
+                    if ($sisa_bayar >= $tagihan) {
+                        mysqli_query($db, "UPDATE ambilprogram SET tagihan = 0 WHERE id_ambil = '$id_ambil'");
+                        $dibayar = $tagihan;
+                        $sisa_bayar -= $tagihan;
+                    } else {
+                        mysqli_query($db, "UPDATE ambilprogram SET tagihan = tagihan - $sisa_bayar 
+                        WHERE id_ambil = '$id_ambil'");
+                        $dibayar = $sisa_bayar;
+                        $sisa_bayar = 0;
+                        $status = 'Belum Lunas';
+                    }
+
+                    // Simpan pembayaran
+                    $sql = mysqli_query($db, "INSERT INTO pembayaran 
+                    (id_pembayaran, nama_siswa, program, tanggal, jumlah_bayar, status, bukti)
+                    VALUES ('$id', '$nama_siswa', '$program', '$tanggal', '$dibayar', '$status', '$bukti')");
+
+                    $id++;
+                }
+
+                if ($sql) {
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit();
+                }
+            }
+            ?>
+
+            <?php
+            if (isset($_GET['edit_id'])) {
+                $id = $_GET['edit_id'];
+                $sql = mysqli_query($db, "SELECT * FROM pembayaran WHERE id_pembayaran = '$id'");
+                $data = mysqli_fetch_assoc($sql);
+
+                if ($data) {
+                    ?>
+                    <h3>Edit Pembayaran ID <?= $id ?></h3>
+                    <form method="post">
+                        <input type="hidden" name="update_id" value="<?= $id ?>">
+                        <label>Nama Siswa:</label><br>
+                        <input type="text" value="<?= $data['nama_siswa'] ?>" disabled><br>
+
+                        <label>Program:</label><br>
+                        <input type="text" value="<?= $data['program'] ?>" disabled><br>
+
+                        <label>Tanggal:</label><br>
+                        <input type="date" value="<?= $data['tanggal'] ?>" disabled><br>
+
+                        <label>Jumlah Bayar (Rp):</label><br>
+                        <input type="number" name="jumlah_bayar" value="<?= $data['jumlah_bayar'] ?>" required><br>
+
+                        <label>Status:</label><br>
+                        <select name="status" required>
+                            <option value="Lunas" <?= $data['status'] == 'Lunas' ? 'selected' : '' ?>>Lunas</option>
+                            <option value="Belum Lunas" <?= $data['status'] == 'Belum Lunas' ? 'selected' : '' ?>>Belum Lunas
+                            </option>
+                        </select><br><br>
+
+                        <input type="submit" name="update" value="Update">
+                    </form>
+                    <?php
+                } else {
+                    echo "<p>❌ Data tidak ditemukan untuk diedit.</p>";
+                }
+            }
+            ?>
+>>>>>>> Stashed changes
 
 
-    <?php
-    if (isset($_POST['update'])) {
-    $id = $_POST['update_id'];
-    $jumlah_bayar_baru = (int)$_POST['jumlah_bayar'];
-    $status = $_POST['status'];
+            <?php
+            if (isset($_POST['update'])) {
+                $id = $_POST['update_id'];
+                $jumlah_bayar_baru = (int) $_POST['jumlah_bayar'];
+                $status = $_POST['status'];
 
-    // Ambil data lama terlebih dahulu
-    $sql_old = mysqli_query($db, "SELECT * FROM pembayaran WHERE id_pembayaran = '$id'");
-    $data_old = mysqli_fetch_assoc($sql_old);
+                // Ambil data lama terlebih dahulu
+                $sql_old = mysqli_query($db, "SELECT * FROM pembayaran WHERE id_pembayaran = '$id'");
+                $data_old = mysqli_fetch_assoc($sql_old);
 
     $jumlah_bayar_lama = (int)$data_old['jumlah_bayar'];
     $program = $data_old['program'];
     $bulan_bayar = $data_old['bulan_$bulan_bayar'];
     $nama_siswa = $data_old['nama_siswa'];
 
-    // Ambil ID siswa berdasarkan nama
-    $get_id_siswa = mysqli_query($db, "SELECT id_siswa FROM siswa WHERE nama = '$nama_siswa'");
-    $data_siswa = mysqli_fetch_assoc($get_id_siswa);
-    $id_siswa = $data_siswa['id_siswa'];
+                // Ambil ID siswa berdasarkan nama
+                $get_id_siswa = mysqli_query($db, "SELECT id_siswa FROM siswa WHERE nama = '$nama_siswa'");
+                $data_siswa = mysqli_fetch_assoc($get_id_siswa);
+                $id_siswa = $data_siswa['id_siswa'];
 
-    // Kembalikan dulu tagihan sebelumnya
-    mysqli_query($db, "UPDATE ambilprogram 
+                // Kembalikan dulu tagihan sebelumnya
+                mysqli_query($db, "UPDATE ambilprogram 
         SET tagihan = tagihan + $jumlah_bayar_lama 
         WHERE id_siswa = '$id_siswa' AND program = '$program'
     ");
 
-    // Update data pembayaran
-    $update = mysqli_query($db, "UPDATE pembayaran 
+                // Update data pembayaran
+                $update = mysqli_query($db, "UPDATE pembayaran 
         SET jumlah_bayar = '$jumlah_bayar_baru', status = '$status' 
         WHERE id_pembayaran = '$id'
     ");
 
-    // Kurangi lagi tagihan sesuai nilai baru
-    mysqli_query($db, "UPDATE ambilprogram 
+                // Kurangi lagi tagihan sesuai nilai baru
+                mysqli_query($db, "UPDATE ambilprogram 
         SET tagihan = tagihan - $jumlah_bayar_baru 
         WHERE id_siswa = '$id_siswa' AND program = '$program'
     ");
+<<<<<<< Updated upstream
 }
+=======
 
-    // Handle hapus
-   if (isset($_POST['hapus_id'])) {
-    $id = $_POST['hapus_id'];
+                if ($update) {
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit();
+                } else {
+                    echo "❌ Gagal memperbarui data.";
+                }
+            }
+>>>>>>> Stashed changes
 
-    // Ambil data pembayaran yang akan dihapus
-    $sql = mysqli_query($db, "SELECT * FROM pembayaran WHERE id_pembayaran = '$id'");
-    $data = mysqli_fetch_assoc($sql);
+            // Handle hapus
+            if (isset($_POST['hapus_id'])) {
+                $id = $_POST['hapus_id'];
 
+                // Ambil data pembayaran yang akan dihapus
+                $sql = mysqli_query($db, "SELECT * FROM pembayaran WHERE id_pembayaran = '$id'");
+                $data = mysqli_fetch_assoc($sql);
+
+<<<<<<< Updated upstream
     if ($data) {
         $jumlah_bayar = (int)$data['jumlah_bayar'];
         $program = $data['program'];
         $bulan_bayar = $data['bula$bulan_bayar'];
         $nama_siswa = $data['nama_siswa'];
         $bukti = $data['bukti'];
+=======
+                if ($data) {
+                    $jumlah_bayar = (int) $data['jumlah_bayar'];
+                    $program = $data['program'];
+                    $nama_siswa = $data['nama_siswa'];
+                    $bukti = $data['bukti'];
+>>>>>>> Stashed changes
 
-        // Ambil ID siswa
-        $get_id_siswa = mysqli_query($db, "SELECT id_siswa FROM siswa WHERE nama = '$nama_siswa'");
-        $data_siswa = mysqli_fetch_assoc($get_id_siswa);
-        $id_siswa = $data_siswa['id_siswa'];
+                    // Ambil ID siswa
+                    $get_id_siswa = mysqli_query($db, "SELECT id_siswa FROM siswa WHERE nama = '$nama_siswa'");
+                    $data_siswa = mysqli_fetch_assoc($get_id_siswa);
+                    $id_siswa = $data_siswa['id_siswa'];
 
-        // Kembalikan jumlah bayar ke tagihan
-        mysqli_query($db, "UPDATE ambilprogram 
+                    // Kembalikan jumlah bayar ke tagihan 
+                    mysqli_query($db, "UPDATE ambilprogram 
             SET tagihan = tagihan + $jumlah_bayar 
             WHERE id_siswa = '$id_siswa' AND program = '$program'
         ");
 
-        // Hapus file bukti jika ada
-        if (!empty($bukti) && file_exists("../uploads/" . $bukti)) {
-            unlink("../uploads/" . $bukti);
-        }
+                    // Hapus file bukti jika ada
+                    if (!empty($bukti) && file_exists("../uploads/" . $bukti)) {
+                        unlink("../uploads/" . $bukti);
+                    }
 
-        // Hapus data dari tabel pembayaran
-        $delete = mysqli_query($db, "DELETE FROM pembayaran WHERE id_pembayaran = '$id'");
+                    // Hapus data dari tabel pembayaran
+                    $delete = mysqli_query($db, "DELETE FROM pembayaran WHERE id_pembayaran = '$id'");
 
+<<<<<<< Updated upstream
     }
 }
     ?>
+=======
+                    if ($delete) {
+                        header("Location: " . $_SERVER['PHP_SELF']);
+                        exit();
+                    } else {
+                        echo "❌ Gagal menghapus data.";
+                    }
+                }
+            }
+            ?>
+>>>>>>> Stashed changes
         </div>
 
         <div class="section">
@@ -332,16 +442,21 @@
                 <input type="submit" class="submit-btn" value="Sortir">
             </form>
 
-            
+
             <?php
             $sort_program = $_GET['sort_program'] ?? '';
             $sort_lunas = $_GET['sort_lunas'] ?? '';
             $query = "SELECT pembayaran.*, program.category FROM pembayaran JOIN program ON pembayaran.program = program.program WHERE 1=1";
+<<<<<<< Updated upstream
             if (!empty($sort_program)) 
             $query .= " AND program.category = '$sort_program'";
             if (!empty($sort_lunas)) {
             $query .= " AND pembayaran.status = '$sort_lunas'";
             }
+=======
+            if (!empty($sort_program))
+                $query .= " AND program.category = '$sort_program'";
+>>>>>>> Stashed changes
             $sql = mysqli_query($db, $query);
             ?>
 
@@ -374,13 +489,15 @@
                                     <input type="hidden" name="edit_id" value="<?= $row['id_pembayaran']; ?>">
                                     <button type="submit">✏️ Edit</button>
                                 </form>
-                                <form method="post" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                <form method="post" style="display:inline;"
+                                    onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                     <input type="hidden" name="hapus_id" value="<?= $row['id_pembayaran']; ?>">
                                     <button type="submit">🗑️ Hapus</button>
                                 </form>
                             </td>
                         </tr>
-                    <?php } $db->close(); ?>
+                    <?php }
+                    $db->close(); ?>
                 </table>
             </div>
         </div>
@@ -436,6 +553,7 @@
             Tanggal Registrasi : ${tanggalDisplay}
         `;
     });
+<<<<<<< Updated upstream
     document.getElementById('jumlah_bayar').addEventListener('input', function () {
     const bayar = parseInt(this.value);
     if (isNaN(bayar) || bayar <= 0) return;
@@ -471,3 +589,6 @@
 });
 
     </script>
+=======
+</script>
+>>>>>>> Stashed changes

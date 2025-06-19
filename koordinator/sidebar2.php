@@ -15,18 +15,36 @@
             left: 0;
             top: 0;
             overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            font-family: Arial, sans-serif;
         }
 
         .logo-container {
-            padding: 20px;
+            padding: 20px 10px;
             background-color: #7830e0;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .logo {
-            height: 40px;
+            height: 60px;
+        }
+
+        .profil {
+            text-align: center;
+        }
+
+        .welcome-text {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .username {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 5px 0 0;
         }
 
         .user-icon {
@@ -110,15 +128,11 @@
                 left: -250px;
             }
 
-            .logo-container .logo {
-                opacity: 0;
-            }
-
             .sidebar {
                 position: fixed;
                 top: 0;
                 left: 0;
-                width: 75%;
+                width: 55%;
                 height: 100%;
                 display: none;
                 z-index: 998;
@@ -142,13 +156,10 @@
         <div class="logo-container">
             <img src="../logo.png" alt="DigiKidz" class="logo">
             <div class="profil">
-                <button>
-                    <img src="../<?= $_SESSION['user']; ?>png" alt="User" class="user-img">
-                    <span class="user-nama"><?= $_SESSION['user']; ?></span>
-                </button>
+                <span class="welcome-text">Selamat Datang Mr/Ms </span>
+                <h4 class="username"><?php echo $_SESSION['user']; ?></h4>
             </div>
         </div>
-
         <a href="karyawan.php" class="menu-item" data-page="karyawan">
             <span class="icon"><img src="../robot.png" alt="robot"></span>
             <span>Data karyawan</span>
@@ -164,7 +175,7 @@
             <span>Hasil Presensi</span>
         </a>
         <!-- Belom fiks ada pa ga -->
-        <a href="materi.php" class="menu-item" data-page="materi">
+        <a href="program.php" class="menu-item" data-page="program">
             <span class="icon"><img src="../robot.png" alt="robot"></span>
             <span>Program</span>
         </a>
@@ -180,9 +191,19 @@
             <span class="icon"><img src="../robot.png" alt="robot"></span>
             <span>Hasil karya</span>
         </a>
-        <div class="logout">
-            <a href="../logout.php">Log out</a>
-        </div>
+        <a href="../logout.php" title="Logout" class="menu-item logout">
+            <span class="icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M16 17L21 12L16 7" stroke="#333" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M21 12H9" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                        d="M12 19V20C12 21.1046 11.1046 22 10 22H5C3.89543 22 3 21.1046 3 20V4C3 2.89543 3.89543 2 5 2H10C11.1046 2 12 2.89543 12 4V5"
+                        stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </span>
+            <span>Logout</span>
+        </a>
     </div>
 
     <script>

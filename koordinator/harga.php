@@ -1,11 +1,12 @@
 <style>
-    <?php include "../styles.css"; ?>
+    <?php
+    session_start();
+    include "../styles.css"; ?>
 </style>
 
 <div class="sidebar-placeholder">
 
     <?php
-    session_start();
     include "sidebar2.php";
 
     include "../db.php" ?>
@@ -51,41 +52,8 @@
         </div>
 
         <div class="section">
-            <h3>Sortir Harga</h3>
-            <form method="get" action="#harga">
-                <label for="sort_program">Pilih Category Program:</label>
-                <select name="sort_program" id="sort_program">
-                    <option value="">Semua Program</option>
-                    <option value="Computer">Computer</option>
-                    <option value="Art">Art</option>
-                    <option value="Robotik">Robotik</option>
-                </select>
-
-                <label for="sort_level">Pilih Level:</label>
-                <select name="sort_level" id="sort_level">
-                    <option value="">Semua Level</option>
-                    <option value="1">Level 1</option>
-                    <option value="2">Level 2</option>
-                    <option value="3">Level 3</option>
-                    <option value="Registrasi">Registrasi</option>
-                </select>
-
-                <input type="submit" class="submit-btn" value="Sortir">
-            </form>
-
-            <?php
-            $sort_program = isset($_GET['sort_program']) ? $_GET['sort_program'] : '';
-            $sort_level = isset($_GET['sort_level']) ? $_GET['sort_level'] : '';
-            $query = "SELECT * FROM category WHERE 1=1";
-            if (!empty($sort_program))
-                $query .= " AND program = '$sort_program'";
-            if (!empty($sort_level))
-                $query .= " AND level = '$sort_level'";
-            $sql = mysqli_query($db, $query);
-            ?>
-
             <div
-                style="width: 100%; max-height: 100vh; overflow-y: auto; margin-top: 10px; padding: 5px; box-shadow: steelblue 2px 2px 2px;">
+                style="width: 100%; max-height: 60vh; overflow-y: auto; margin-top: 10px; padding: 5px; box-shadow: steelblue 2px 2px 2px;">
                 <table border="1">
                     <tr>
                         <th>ID</th>
@@ -93,7 +61,9 @@
                         <th>Harga</th>
                         <th>aksi</th>
                     </tr>
-                    <?php while ($row = mysqli_fetch_array($sql)) { ?>
+                    <?php
+                    $sql = mysqli_query($db, "SELECT * FROM category ORDER BY id_harga DESC");
+                    while ($row = mysqli_fetch_array($sql)) { ?>
                         <tr>
                             <td><?php echo $row['id_harga']; ?></td>
                             <td><?php echo $row['category']; ?></td>
