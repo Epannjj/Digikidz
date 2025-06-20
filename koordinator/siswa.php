@@ -132,22 +132,21 @@
             if (mysqli_num_rows($cek_program) > 0) {
                 showNotification("Siswa sudah terdaftar di program ini!", "error");
             } else {
-                // Ambil tagihan dari tabel program
-                $sqltagihan = mysqli_query($db, "SELECT harga FROM program WHERE program = '$program'");
+                $sqltagihan = mysqli_query($db, "SELECT harga, `MONTH OF CERTIFICATED` FROM program WHERE program = '$program'");
                 $ctagihan = mysqli_fetch_array($sqltagihan);
-
                 if ($ctagihan) {
                     $tagihan = $ctagihan['harga'];
+                    $brpbulan = $ctagihan['MONTH OF CERTIFICATED'];
                 } else {
-                    showNotification("Program tidak ditemukan di tabel program!", "error");
+                    echo "<script>alert('Program tidak ditemukan di tabel program!');</script>";
                     $tagihan = 0;
                 }
-
-                // Generate ID untuk ambilprogram
+                $totaltagihan = $tagihan * $brpbulan;
+                $spp_bulanan = $tagihan;
                 $idambil = 'p' . $id_siswa_existing . '_' . time(); // Menambahkan timestamp untuk uniqueness
-    
+                
                 // Simpan ke ambilprogram saja (tidak ke tabel siswa)
-                $sql2 = mysqli_query($db, "INSERT INTO ambilprogram (id_ambil, id_siswa, program, tagihan, tanggal) VALUES ('$idambil','$id_siswa_existing', '$program', '$tagihan', '$tanggal')");
+                $sql2 = mysqli_query($db, "INSERT INTO ambilprogram (id_ambil, id_siswa, program, tagihan, spp_bulanan, tanggal) VALUES ('$idambil','$id_siswa_existing', '$program', '$totaltagihan', '$spp_bulanan', '$tanggal')");
 
                 if ($sql2) {
                     showNotification("Program berhasil ditambahkan untuk siswa $nama", "success");
@@ -263,8 +262,25 @@
                                 $tagihan = 0;
                             }
                             $totaltagihan = $tagihan * $brpbulan;
-                            // Simpan ke ambilprogram
-                            $sql2 = mysqli_query($db, "INSERT INTO ambilprogram (id_ambil, id_siswa, program, tagihan, status, tanggal) VALUES ('$idambil', '$id', '$program', '$totaltagihan', 'aktif', '$tanggal')");
+                            $spp_bulanan = $tagihan;
+                            $cekKategori = mysqli_query($db, "SELECT category FROM program WHERE program = '$program'");
+                            $dataKategori = mysqli_fetch_assoc($cekKategori);
+                            $kategoriProgram = $dataKategori['category'] ?? null;
+
+                            // Cek apakah siswa ini sudah mengambil program dari kategori tersebut
+                            $cekRegistrasi = mysqli_query($db, "SELECT * FROM ambilprogram 
+                                JOIN program ON ambilprogram.program = program.PROGRAM 
+                                WHERE ambilprogram.id_siswa = '$id' AND program.category = '$kategoriProgram'");
+                            if (mysqli_num_rows($cekRegistrasi) === 0) {
+                                // Belum ambil kategori ini, ambil biaya registrasi dari tabel category
+                                $sqlambilregis = mysqli_query($db, "SELECT harga FROM category WHERE category = '$kategoriProgram'");
+                                $ambilregis = mysqli_fetch_assoc($sqlambilregis);
+                                if ($ambilregis) {
+                                    $registrasi = $ambilregis['harga'];
+                                    $totaltagihan += $registrasi;
+                                }
+                            }
+                            $sql2 = mysqli_query($db, "INSERT INTO ambilprogram (id_ambil, id_siswa, program, tagihan, spp_bulanan, status, tanggal) VALUES ('$idambil', '$id', '$program', '$totaltagihan', '$spp_bulanan', 'aktif', '$tanggal')");
                             echo $sql2 ? showNotification("Data Siswa berhasil ditambahkan", "success")
                                 : showNotification("Data tagihan gagal ditambahkan", "error");
                         } else {
@@ -670,7 +686,7 @@
         </div>
     </div>
 </div>
-
+<script src="../jsrefresh.js"></script>
 <script>
     // Edit Form Functions
     function showEditForm(id_siswa, nama, password) {

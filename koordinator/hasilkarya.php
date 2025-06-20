@@ -13,8 +13,6 @@
 
 </div>
 <?php
-// include "sidebar2.php";
-include "../db.php";
 $uploadsDir = '../uploads';
 $zipFileName = 'uploads_' . date('Ymd_His') . '.zip';
 
