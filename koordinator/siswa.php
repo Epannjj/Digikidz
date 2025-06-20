@@ -274,7 +274,7 @@
                 }
                 ?>
             </div>
-            <div style="text-align: center; margin-bottom: 30px;">
+            <div class="menu-op" style="text-align: center; margin-bottom: 30px;">
                 <button class="menu-btn active" onclick="showDataSiswa()">Data Siswa</button>
                 <button class="menu-btn" onclick="showDataSiswaprogram()">Data Program Siswa</button>
                 <?php

@@ -1,5 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-    <title>Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>koordinator</title>
     <style>
         body {
             margin: 0;
@@ -20,7 +25,7 @@
         }
 
         .logo-container {
-            padding: 20px 10px;
+            padding: 20px 15px;
             background-color: #7830e0;
             display: flex;
             flex-direction: column;
@@ -30,6 +35,7 @@
 
         .logo {
             height: 60px;
+            margin-bottom: 10px;
         }
 
         .profil {
@@ -42,7 +48,7 @@
         }
 
         .username {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             margin: 5px 0 0;
         }
@@ -80,13 +86,6 @@
             height: 20px;
         }
 
-        .logout {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            cursor: pointer;
-        }
-
         .icon {
             color: yellow;
             font-size: 24px;
@@ -103,7 +102,7 @@
             position: fixed;
             top: 15px;
             left: 15px;
-            z-index: 1;
+            z-index: 1000;
             background-color: floralwhite;
             border: none;
             border-radius: 5px;
@@ -132,7 +131,7 @@
                 position: fixed;
                 top: 0;
                 left: 0;
-                width: 55%;
+                width: 75%;
                 height: 100%;
                 display: none;
                 z-index: 998;

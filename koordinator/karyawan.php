@@ -95,38 +95,41 @@ if (isset($_POST['hapus'])) {
         <div class="section">
 
             <h3>Data karyawan</h3>
-            <table>
-                <thead <tr>
-                    <th>no</th>
-                    <th>Nama</th>
-                    <th>Username</th>
-                    <th>Password</th>
-                    <th>jabatan</th>
-                    <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="attendance-list">
-                    <?php
-                    $id = 1;
-                    $data = mysqli_query($db, "SELECT * FROM karyawan");
-                    while ($row = mysqli_fetch_array($data)) { ?>
-                        <td><?= $id ?></td>
-                        <td><?= $row['nama'] ?></td>
-                        <td><?= $row['username'] ?></td>
-                        <td><?= $row['password'] ?></td>
-                        <td><?= $row['jabatan'] ?></td>
-                        <td>
-                            <button class="btn-edit"
-                                onclick="showEditForm('<?php echo $row['id']; ?>','<?php echo $row['nama']; ?>', '<?php echo $row['username']; ?>','<?php echo $row['password']; ?>','<?php echo $row['jabatan']; ?>')">Edit</button>
-                            <button class="btn-hapus"
-                                onclick="showDeleteConfirm('<?php echo $row['id']; ?>', '<?php echo $row['username']; ?>')">Hapus</button>
-                        </td>
+            <div class="tabel"
+                style="width: 100%; max-height: 60vh; overflow-y: auto; margin-top: 10px; padding: 5px; box-shadow: steelblue 2px 2px 2px;">
+                <table>
+                    <thead <tr>
+                        <th>no</th>
+                        <th>Nama</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>jabatan</th>
+                        <th>Aksi</th>
                         </tr>
+                    </thead>
+                    <tbody id="attendance-list">
                         <?php
-                        $id++;
-                    } ?>
-                </tbody>
-            </table>
+                        $id = 1;
+                        $data = mysqli_query($db, "SELECT * FROM karyawan");
+                        while ($row = mysqli_fetch_array($data)) { ?>
+                            <td><?= $id ?></td>
+                            <td><?= $row['nama'] ?></td>
+                            <td><?= $row['username'] ?></td>
+                            <td><?= $row['password'] ?></td>
+                            <td><?= $row['jabatan'] ?></td>
+                            <td>
+                                <button class="btn-edit"
+                                    onclick="showEditForm('<?php echo $row['id']; ?>','<?php echo $row['nama']; ?>', '<?php echo $row['username']; ?>','<?php echo $row['password']; ?>','<?php echo $row['jabatan']; ?>')">Edit</button>
+                                <button class="btn-hapus"
+                                    onclick="showDeleteConfirm('<?php echo $row['id']; ?>', '<?php echo $row['username']; ?>')">Hapus</button>
+                            </td>
+                            </tr>
+                            <?php
+                            $id++;
+                        } ?>
+                    </tbody>
+                </table>
+            </div>
             <div id="editOverlay" class="overlay">
                 <div class="popup">
                     <h2>Edit karyawan</h2>

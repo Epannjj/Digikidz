@@ -127,10 +127,6 @@
                 left: -250px;
             }
 
-            .logo-container .logo {
-                opacity: 0;
-            }
-
             .sidebar {
                 position: fixed;
                 top: 0;

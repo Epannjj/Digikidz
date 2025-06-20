@@ -96,6 +96,12 @@ textarea {
 .submit-btn:hover {
   background-color: #444;
 }
+.menu-op{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    min-height: 50px;
+}
 .menu-btn {
             padding: 12px 24px;
             margin: 0 10px;
@@ -105,6 +111,9 @@ textarea {
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 14px;
+            display: flex; 
+            align-items: center;
+            justify-content: center;
         }
         
         .menu-btn:hover {
@@ -112,9 +121,9 @@ textarea {
         }
         
         .menu-btn.active {
-            background-color: #4caf50;
-            color: white;
-            border-color: #4caf50;
+            background-color: #b2fff5;
+            color: rgb(0, 0, 0);
+            border-color: #b2fff5;
         }
         
         .table-container {
@@ -370,8 +379,8 @@ custom-select {
 }
 /* notif badge */
 .notification-badge {
-            position: absolute;
-            top: -8px;
+            position: relative;
+            top: -18px;
             right: -8px;
             min-width: 20px;
             height: 20px;
@@ -415,7 +424,6 @@ custom-select {
       /* Hanya untuk demo */
   }
   .sidebar-placeholder.open{
-
   width: 55%;
    left: 0;
   }
@@ -426,4 +434,9 @@ custom-select {
   .header h2{
   margin-left: 30px;
   }
+    .menu-op {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 }

@@ -68,7 +68,9 @@
             ?>
 
             <div class="conten">
-                <div class="session">
+                <div class="session"
+                    style="width: 100%; max-height: 60vh; overflow-y: auto; margin-top: 10px; padding: 5px; box-shadow: steelblue 2px 2px 2px;">
+
                     <table id="tabel">
                         <tr>
                             <th>No</th>

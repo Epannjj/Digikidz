@@ -26,7 +26,8 @@ include "../db.php";
         </div>
 
         <div class="content">
-            <div class="section">
+            <div class="section"
+                style="width: 100%; max-height: 100vh; overflow-y: auto; margin-top: 10px; padding: 5px; box-shadow: steelblue 2px 2px 2px;">
                 <table border="1">
                     <thead>
                         <tr>
